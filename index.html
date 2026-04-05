@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#05091A">
+<meta name="apple-mobile-web-app-title" content="Marathon Coach">
+<title>Houston 2027 — Marathon Coach</title>
+<base href="./">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#05091A;--bg2:#0A1228;--card:#0E1B30;--card2:#132238;
+  --bor:#1C2E4A;--bor2:#263F60;
+  --acc:#00E5B0;--acc2:#00B88A;--acc3:#007A5C;
+  --gold:#F5A623;--gold2:#D98B10;
+  --red:#FF4F6A;--red2:#D63050;
+  --blu:#4A9EFF;--blu2:#2E80E0;
+  --pur:#9B7FFF;--pur2:#7A5EE0;
+  --grn:#22C55E;
+  --txt:#EDF2FA;--txt2:#8EA8CC;--mut:#3D5A7A;--muted2:#253D5A;
+  --font:'Aptos Display','Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,16px);
+  --r:18px;--rs:12px;--rx:22px;
+}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:var(--font);overflow:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+#app{height:100vh;max-width:430px;margin:0 auto;display:flex;flex-direction:column;position:relative;
+  background:radial-gradient(ellipse 60% 35% at 95% 0%,rgba(0,229,176,.1),transparent),
+             radial-gradient(ellipse 50% 30% at 0% 40%,rgba(74,158,255,.07),transparent)}
+.screen{display:none;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  padding:12px 16px calc(90px + var(--safe-bot))}
+.screen.active{display:block}
+
+/* ── PREMIUM CARD ── */
+.card{background:var(--card);border:1px solid var(--bor);border-radius:var(--r);overflow:hidden;margin-bottom:12px;position:relative}
+.card-hd{padding:13px 16px;border-bottom:1px solid var(--bor);font-size:11px;font-weight:800;color:var(--txt2);text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card-bd{padding:16px}
+
+/* ── HERO ── */
+.hero{background:var(--card);border:1px solid var(--bor2);border-radius:var(--rx);overflow:hidden;margin:10px 0 14px}
+.rainbow{height:2px;background:linear-gradient(90deg,transparent 0%,var(--acc) 25%,var(--gold) 55%,var(--blu) 80%,transparent)}
+
+/* ── TYPOGRAPHY ── */
+.section-title{font-size:22px;font-weight:800;color:var(--txt);margin-bottom:3px}
+.sub{font-size:14px;color:var(--txt2);line-height:1.65}
+.hint{font-size:12px;color:var(--mut);line-height:1.5}
+.label{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.mono{font-variant-numeric:tabular-nums}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+
+/* ── STAT TILES ── */
+.tile{background:var(--card2);border:1px solid var(--bor);border-radius:14px;padding:12px}
+.stat{background:var(--card2);border:1px solid var(--bor);border-radius:14px;padding:12px;text-align:center}
+.stat .v{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;margin:3px 0 2px}
+.stat .lb{font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.07em}
+.stat .sl{font-size:11px;color:var(--mut);margin-top:1px}
+
+/* ── BADGES ── */
+.pill{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 11px;border-radius:20px;border:1px solid currentColor;letter-spacing:.03em;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid;white-space:nowrap;letter-spacing:.03em}
+.ph-rehab{background:rgba(255,79,106,.12);color:var(--red);border-color:var(--red)55}
+.ph-return{background:rgba(245,166,35,.12);color:var(--gold);border-color:var(--gold)55}
+.ph-base{background:rgba(0,229,176,.11);color:var(--acc);border-color:var(--acc)55}
+.ph-build{background:rgba(74,158,255,.11);color:var(--blu);border-color:var(--blu)55}
+.ph-peak{background:rgba(34,197,94,.11);color:var(--grn);border-color:var(--grn)55}
+.ph-taper{background:rgba(155,127,255,.11);color:var(--pur);border-color:var(--pur)55}
+
+/* ── FOCUS BLOCKS ── */
+.focus{padding:13px 15px;border-left:3px solid var(--acc);border-radius:0 12px 12px 0;background:rgba(0,229,176,.07);font-size:14px;color:var(--txt2);line-height:1.65;margin-bottom:12px}
+.focus.gold{border-left-color:var(--gold);background:rgba(245,166,35,.07)}
+.focus.red{border-left-color:var(--red);background:rgba(255,79,106,.07)}
+.focus.blu{border-left-color:var(--blu);background:rgba(74,158,255,.07)}
+.focus.pur{border-left-color:var(--pur);background:rgba(155,127,255,.07)}
+
+/* ── FORMS ── */
+input,select,textarea{width:100%;background:var(--card2);border:1.5px solid var(--bor);border-radius:var(--rs);color:var(--txt);font-family:var(--font);font-size:15px;padding:12px 14px;outline:none;resize:vertical;transition:border-color .2s,box-shadow .2s;line-height:1.5}
+input:focus,select:focus,textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(0,229,176,.12)}
+input::placeholder,textarea::placeholder{color:var(--mut)}
+select option{background:#0E1B30}
+input[type=date]{color-scheme:dark}
+
+/* ── BUTTONS ── */
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:14px;border-radius:var(--rs);border:1.5px solid var(--acc);background:rgba(0,229,176,.1);color:var(--acc);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;transition:background .15s,transform .1s;letter-spacing:.01em}
+.btn:active{background:rgba(0,229,176,.22);transform:scale(.98)}
+.btn.secondary{border-color:var(--blu)66;background:rgba(74,158,255,.1);color:var(--blu)}
+.btn.ghost{border-color:var(--bor);background:transparent;color:var(--txt2)}
+.btn.danger{border-color:var(--red)55;background:rgba(255,79,106,.1);color:var(--red)}
+.btn.gold-btn{border-color:var(--gold)66;background:rgba(245,166,35,.12);color:var(--gold)}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── PROGRESS ── */
+.prog{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.prog>div{height:100%;border-radius:3px;transition:width .35s cubic-bezier(.4,0,.2,1)}
+
+/* ── RATING BUTTONS ── */
+.r-btn{flex:1;height:52px;border-radius:10px;background:var(--card2);border:1.5px solid var(--bor);color:var(--mut);font-size:17px;font-weight:800;cursor:pointer;font-family:var(--font);transition:all .15s}
+
+/* ── WEEK NAV ── */
+.wk-nav{width:44px;height:44px;border-radius:10px;background:var(--card2);border:1px solid var(--bor);color:var(--txt2);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .15s,background .15s;flex-shrink:0}
+.wk-nav:active{border-color:var(--acc);background:rgba(0,229,176,.1)}
+
+/* ── DAY ACCORDION ── */
+details.day-card{background:var(--card);border:1px solid var(--bor);border-radius:14px;overflow:hidden;margin-bottom:8px;transition:border-color .2s}
+details.day-card[open]{border-color:var(--bor2)}
+details.day-card>summary{list-style:none;cursor:pointer;-webkit-user-select:none;user-select:none}
+details.day-card>summary::-webkit-details-marker{display:none}
+.day-sum{padding:14px 16px;display:flex;align-items:center;gap:10px;transition:background .15s}
+.day-sum.today-hl{background:rgba(0,229,176,.07);border-left:3px solid var(--acc)}
+.day-sum.logged-hl{border-left:3px solid rgba(0,229,176,.3)}
+.day-sum:not(.today-hl):not(.logged-hl){border-left:3px solid transparent}
+.day-body{padding:0 16px 16px}
+
+/* ── PLAN WEEK ACCORDION ── */
+details.week-card{background:var(--card);border:1px solid var(--bor);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+details.week-card>summary{list-style:none;cursor:pointer}
+details.week-card>summary::-webkit-details-marker{display:none}
+.wk-sum{padding:14px 16px;display:flex;align-items:center;gap:10px;border-left:3px solid transparent}
+.wk-sum.cur{background:rgba(0,229,176,.07);border-left-color:var(--acc)}
+.wk-body{padding:0 14px 14px}
+
+/* ── MEAL ROWS ── */
+.meal-row{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.meal-row:last-child{border-bottom:none}
+.meal-icon{font-size:18px;flex-shrink:0;width:26px;text-align:center;margin-top:1px}
+.meal-time{font-size:11px;font-weight:700;color:var(--acc2);min-width:64px;flex-shrink:0;padding-top:2px}
+.meal-text{font-size:13px;color:var(--txt2);line-height:1.55}
+.meal-text strong{color:var(--txt);font-weight:600}
+
+/* ── EXERCISE STEPS ── */
+.ex-step{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.ex-step:last-child{border-bottom:none}
+.ex-num{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px}
+.ex-text{font-size:13px;color:var(--txt2);line-height:1.5;flex:1}
+.ex-text strong{color:var(--txt);font-weight:600}
+.ex-detail{font-size:11px;color:var(--mut);margin-top:2px}
+
+/* ── QUOTE ── */
+.quote-card{border:1px solid var(--bor);border-left:3px solid var(--gold);border-radius:0 14px 14px 0;padding:14px 16px;margin-bottom:12px;background:rgba(245,166,35,.05)}
+.quote-card em{font-size:14px;color:var(--txt2);line-height:1.7;font-style:italic;display:block;margin-bottom:6px}
+.quote-card cite{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.05em;display:block;font-style:normal;text-transform:uppercase}
+
+/* ── ZONE ROWS ── */
+.zone-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.zone-row:last-child{border-bottom:none}
+.zone-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.zone-lbl{font-size:12px;color:var(--txt2);font-weight:600;flex:1}
+.zone-val{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--txt)}
+
+/* ── NAV ── */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;
+  background:rgba(5,9,26,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.07);display:grid;grid-template-columns:repeat(5,1fr);
+  padding-bottom:var(--safe-bot);z-index:100}
+.nav button{background:none;border:none;color:var(--mut);padding:10px 4px 9px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;
+  font-family:var(--font);transition:color .15s;position:relative}
+.nav button.on{color:var(--acc)}
+.nav button[data-tab="log"].on{color:var(--blu)}
+.nav button[data-tab="coach"].on{color:var(--gold)}
+.nav button[data-tab="plan"].on{color:var(--pur)}
+.nav button[data-tab="profile"].on{color:#FF8FA3}
+.nav button.on::after{content:'';position:absolute;bottom:0;left:30%;right:30%;height:2px;border-radius:2px;background:currentColor}
+.nav .ico{font-size:20px;line-height:1}
+.nav .lbl{font-size:10px;font-weight:700;letter-spacing:.04em}
+
+/* ── TOAST ── */
+#toast{position:fixed;left:50%;transform:translateX(-50%) translateY(8px);
+  bottom:calc(90px + var(--safe-bot));padding:10px 18px;border-radius:99px;
+  background:var(--card2);border:1px solid var(--bor2);font-size:13px;font-weight:700;
+  opacity:0;pointer-events:none;transition:.22s ease;z-index:200;white-space:nowrap;
+  color:var(--txt)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── MISC ── */
+.hr{height:1px;background:var(--bor);margin:14px 0}
+.chevron{transition:transform .2s}details[open] .chevron{transform:rotate(180deg)}
+.coach-out{background:var(--bg2);border:1px solid var(--bor);border-left:3px solid var(--gold);border-radius:0 14px 14px 0;padding:16px;font-size:14px;color:var(--txt2);line-height:1.85;white-space:pre-wrap;margin-bottom:10px}
+
+@media(max-width:360px){.g2,.g3,.g4{grid-template-columns:1fr 1fr}.btn-row{grid-template-columns:1fr}}
+</style>
+
+<style id="premium-app-rebuild">
+:root{
+  --safe-top:max(env(safe-area-inset-top), 12px);
+  --safe-bot:max(env(safe-area-inset-bottom), 12px);
+  --font:'Aptos Display','Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --title:34px;
+  --h2:28px;
+  --h3:22px;
+  --body:17px;
+  --small:15px;
+  --micro:13px;
+}
+html,body{
+  min-height:100%;
+  background:#040B18;
+}
+body{
+  font-family:var(--font);
+  font-size:var(--body);
+  line-height:1.58;
+  letter-spacing:-0.012em;
+  text-rendering:optimizeLegibility;
+  overscroll-behavior:none;
+}
+#app{
+  min-height:100dvh;
+  height:100dvh;
+  max-width:430px;
+  margin:0 auto;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(73,138,255,.12), transparent 28%),
+    radial-gradient(circle at 12% 28%, rgba(0,229,176,.08), transparent 18%),
+    linear-gradient(180deg, #06101F 0%, #071327 46%, #06111F 100%);
+  position:relative;
+  overflow:hidden;
+}
+#app::before{
+  content:'';
+  position:fixed;
+  top:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:430px; height:calc(var(--safe-top) + 10px);
+  background:linear-gradient(180deg, rgba(6,16,31,.98), rgba(6,16,31,.78));
+  pointer-events:none; z-index:120;
+}
+#app::after{
+  content:'';
+  position:fixed;
+  left:50%; transform:translateX(-50%);
+  bottom:0;
+  width:100%; max-width:430px;
+  height:calc(108px + var(--safe-bot));
+  background:linear-gradient(180deg, rgba(6,16,31,0), rgba(4,10,20,.76) 24%, rgba(4,10,20,.98) 58%);
+  pointer-events:none; z-index:80;
+}
+.screen{
+  padding:calc(var(--safe-top) + 22px) 18px calc(118px + var(--safe-bot));
+  scroll-padding-top:calc(var(--safe-top) + 22px);
+}
+.card,.hero,.quote-card{
+  background:linear-gradient(180deg, rgba(13,28,51,.88), rgba(9,19,36,.9));
+  border:1px solid rgba(133,177,255,.16);
+  box-shadow:0 12px 30px rgba(0,0,0,.22);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.card-hd{
+  font-size:var(--micro)!important;
+  letter-spacing:.08em!important;
+  color:#bcd0ef!important;
+  padding:14px 18px!important;
+}
+.card-bd{padding:18px!important;}
+.section-title{font-size:var(--title)!important;line-height:1.08!important;letter-spacing:-.04em!important;}
+.sub,.hint,.focus,.meal-text,.ex-text,.coach-out,.zone-lbl,.zone-val,input,select,textarea{
+  font-size:var(--body)!important; line-height:1.6!important;
+  font-family:var(--font)!important;
+}
+.label,.lb,.badge,.pill,.meal-time,.stat .sl,.ex-detail{
+  font-size:var(--micro)!important;
+  letter-spacing:.05em!important;
+}
+.hero{
+  border-radius:28px!important;
+  overflow:hidden;
+  background:
+    linear-gradient(180deg, rgba(5,12,24,.34), rgba(5,12,24,.82)),
+    radial-gradient(circle at 50% 82%, rgba(255,170,80,.38), transparent 18%),
+    linear-gradient(180deg, #0a1730 0%, #081224 55%, #070d19 100%);
+  position:relative;
+}
+.hero::before{
+  content:'';
+  position:absolute; inset:auto 0 76px 0; height:152px;
+  background:
+    linear-gradient(180deg,transparent,rgba(0,0,0,.1) 35%,rgba(3,6,12,.7) 100%),
+    radial-gradient(circle at 50% 84%,rgba(255,169,77,.95),rgba(255,169,77,.22) 14%,transparent 32%),
+    linear-gradient(90deg,rgba(19,35,62,.18) 0 8%,rgba(255,255,255,.02) 8% 9%,rgba(19,35,62,.14) 9% 14%,transparent 14% 18%,rgba(19,35,62,.18) 18% 25%,rgba(255,255,255,.02) 25% 26%,rgba(19,35,62,.14) 26% 32%,transparent 32% 68%,rgba(19,35,62,.18) 68% 74%,rgba(255,255,255,.02) 74% 75%,rgba(19,35,62,.16) 75% 81%,transparent 81% 84%,rgba(19,35,62,.16) 84% 90%,rgba(255,255,255,.02) 90% 91%,rgba(19,35,62,.2) 91% 100%);
+  opacity:.95; pointer-events:none;
+}
+.hero::after{
+  content:''; position:absolute; left:14%; right:14%; bottom:73px; height:2px;
+  background:linear-gradient(90deg,transparent,rgba(255,202,132,.75),transparent);
+  box-shadow:0 0 28px rgba(255,160,64,.5);
+}
+#h-name{font-size:clamp(24px, 6.4vw, 34px)!important;line-height:1.1!important;letter-spacing:-.04em!important;}
+#h-raceinfo{font-size:16px!important;color:#d2ddf2!important;line-height:1.45!important;}
+#cd-days{font-size:clamp(84px, 22vw, 116px)!important;letter-spacing:-.09em!important;}
+#cd-h,#cd-m,#cd-s{font-size:40px!important;}
+#g2fix .tile, .tile, .stat{
+  border-radius:18px!important;
+  padding:16px!important;
+}
+#g2fix .tile > div:last-child,
+#h-today-dist,#h-today-hr,.stat .v{
+  font-size:28px!important; line-height:1.1!important; font-weight:800!important;
+}
+#h-today-type,#h-tmr-type{font-size:28px!important; line-height:1.15!important;}
+#h-today-note,#h-tmr-note{font-size:17px!important; line-height:1.58!important;}
+#h-today-note{margin-bottom:16px!important;}
+#h-today-dt,#h-tmr-dt{font-size:13px!important;}
+#s-home .quote-card em{font-size:18px!important;line-height:1.7!important;color:#f1f5ff!important;font-style:normal!important;}
+#s-home .quote-card cite{font-size:14px!important;}
+#h-schedule > div{padding:11px 0!important;}
+#h-schedule > div > div:first-child{font-size:13px!important;min-width:78px!important;}
+#h-schedule > div > div:last-child{font-size:16px!important;line-height:1.55!important;}
+.simple-diet-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.diet-chip{
+  background:linear-gradient(180deg, rgba(22,39,66,.94), rgba(12,24,44,.96));
+  border:1px solid rgba(124,160,226,.16);
+  border-radius:18px; padding:14px 15px;
+}
+.diet-chip .k{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9fb4d8;margin-bottom:6px;}
+.diet-chip .v{font-size:16px;line-height:1.5;color:#f1f5ff;}
+.mode-row{display:flex;gap:10px;flex-wrap:wrap}
+.mode-pill{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:999px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  font-size:14px;font-weight:700;color:#dce6fb;
+}
+.mode-pill.active{background:rgba(63,224,255,.12);border-color:rgba(63,224,255,.34);color:#56d8ff}
+.mode-pill .dot{width:9px;height:9px;border-radius:50%;}
+/* Generated content consistency */
+#log-days, #plan-list, #coach-response, #coach-zones, #p-zones, #s-profile, #s-coach{
+  font-family:var(--font)!important;
+}
+#s-log > div:first-child > div:first-child,
+#s-profile .section-title, #s-coach .section-title, #s-plan .section-title{
+  font-size:var(--title)!important; line-height:1.08!important;
+}
+#log-wkd,#plan-subtitle,#s-profile .sub,#s-coach .sub{font-size:18px!important;line-height:1.55!important;}
+#plan-filter, #coach-key, #s-profile input, #s-profile select, #s-profile textarea, #log-days input, #log-days select, #log-days textarea{
+  font-size:18px!important; min-height:58px;
+}
+#log-days textarea{min-height:148px;}
+#log-days .label, #s-profile .label, #s-coach .card-hd, #plan-list .badge, #plan-list .wk-body [style*="text-transform:uppercase"]{
+  font-size:13px!important;
+}
+#log-days .ex-text strong, #log-days .meal-text strong, #plan-list strong{color:var(--txt)!important;}
+#plan-list .wk-sum{padding:18px!important; align-items:flex-start!important; gap:14px!important;}
+#plan-list .wk-sum > div:first-child{font-size:20px!important;min-width:34px!important;padding-top:4px;}
+#plan-list .wk-sum > div:nth-child(2) > div:first-child{font-size:20px!important;font-weight:800!important;line-height:1.2!important;}
+#plan-list .wk-sum > div:nth-child(2) > div:last-child{font-size:16px!important;line-height:1.45!important;margin-top:6px!important;}
+#plan-list .wk-body > div[style*="margin:6px 0 10px"] > div:first-child{font-size:14px!important;margin-bottom:8px!important;}
+#plan-list .focus{font-size:18px!important;line-height:1.62!important;padding:18px!important;border-radius:22px!important;background:linear-gradient(180deg, rgba(0,229,176,.08), rgba(0,229,176,.03))!important;}
+#plan-list .wk-body > div[style*="display:flex;gap:8px"]{padding:12px 0!important;gap:12px!important;}
+#plan-list .wk-body > div[style*="display:flex;gap:8px"] > div:nth-child(1){font-size:15px!important;min-width:42px!important;padding-top:4px!important;}
+#plan-list .wk-body > div[style*="display:flex;gap:8px"] > div:nth-child(2){font-size:14px!important;padding:6px 12px!important;border-radius:999px!important;}
+#plan-list .wk-body > div[style*="display:flex;gap:8px"] > div:nth-child(3){font-size:17px!important;min-width:62px!important;padding-top:2px!important;}
+#plan-list .wk-body > div[style*="display:flex;gap:8px"] > div:nth-child(4){font-size:17px!important;line-height:1.6!important;}
+#plan-list .wk-body > div[style*="margin-top:10px;background:var(--card2)"]{padding:16px!important;border-radius:18px!important;}
+#plan-list .wk-body > div[style*="margin-top:10px;background:var(--card2)"] > div:first-child{font-size:13px!important;margin-bottom:10px!important;}
+#plan-list .wk-body > div[style*="margin-top:10px;background:var(--card2)"] > div{font-size:16px!important;line-height:1.5!important;}
+#log-days .day-sum{padding:18px!important;}
+#log-days .day-body{padding:0 18px 18px!important;}
+#log-days .r-btn{height:64px!important;font-size:28px!important;border-radius:18px!important;}
+#log-days .meal-time,#log-days .ex-detail,#log-days .stat .sl{font-size:14px!important;}
+#log-days .meal-text,#log-days .ex-text,#log-days textarea{font-size:17px!important;line-height:1.6!important;}
+#s-profile .stat .v,#s-log .stat .v,#s-home .stat .v{font-size:28px!important;}
+#s-profile .card-bd,#s-log .card-bd,#s-plan .card-bd,#s-coach .card-bd{padding:18px!important;}
+/* Native nav */
+.nav{
+  position:fixed!important;
+  left:50%!important; transform:translateX(-50%)!important; bottom:0!important;
+  width:100%!important; max-width:430px!important;
+  display:grid!important; grid-template-columns:repeat(5,1fr)!important;
+  padding:10px 10px calc(var(--safe-bot) + 6px)!important;
+  background:linear-gradient(180deg, rgba(7,18,35,.94), rgba(5,12,25,.985))!important;
+  border-top:1px solid rgba(255,255,255,.08)!important;
+  box-shadow:0 -18px 40px rgba(0,0,0,.34)!important;
+  z-index:140!important;
+}
+.nav button{
+  min-height:72px!important;
+  padding:8px 0 2px!important;
+  gap:7px!important;
+  background:none!important;border:none!important;
+  display:flex!important; align-items:center!important; justify-content:flex-end!important;
+  color:#aabce0!important;
+}
+.nav .ico{
+  width:52px!important;height:52px!important;border-radius:17px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025))!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
+}
+.nav .ico svg{width:24px;height:24px;display:block}
+.nav .lbl{font-size:13px!important;letter-spacing:-.01em!important;font-weight:700!important;text-transform:none!important;}
+.nav button.on::after{display:none!important;}
+.nav button[data-tab="home"] .ico{color:#56D8FF}
+.nav button[data-tab="log"] .ico{color:#77A7FF}
+.nav button[data-tab="coach"] .ico{color:#F2C56C}
+.nav button[data-tab="plan"] .ico{color:#B892FF}
+.nav button[data-tab="profile"] .ico{color:#FF92B3}
+.nav button.on .ico{
+  background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.05))!important;
+  border-color:rgba(255,255,255,.16)!important;
+  transform:translateY(-1px);
+}
+.nav button.on .lbl{color:var(--txt)!important;}
+/* remove deployment guide from coach */
+#s-coach .card:last-child{display:none!important;}
+@supports (-webkit-touch-callout:none){
+  html, body, #app { min-height:-webkit-fill-available; }
+}
+</style>
+
+</head>
+<body>
+<div id="app">
+
+<!-- ══════════ HOME ══════════════════════════════════════════════ -->
+<section id="s-home" class="screen active">
+
+  <!-- COUNTDOWN HERO -->
+  <div class="hero" style="margin-top:10px">
+    <div class="rainbow"></div>
+    <div style="padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.06)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div>
+          <div id="h-name" style="font-size:17px;font-weight:800;color:var(--txt)">Marathon Coach</div>
+          <div id="h-raceinfo" style="font-size:11px;color:var(--mut);font-weight:600;letter-spacing:.05em;margin-top:2px">Chevron Houston Marathon 2027</div>
+        </div>
+        <span id="h-phase" class="pill" style="color:var(--acc)">Phase</span>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:12px">
+        <div style="flex:1">
+          <div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Days to race</div>
+          <div id="cd-days" style="font-size:90px;font-weight:800;line-height:.88;font-variant-numeric:tabular-nums;letter-spacing:-5px;color:var(--txt)">—</div>
+        </div>
+        <div style="flex-shrink:0;padding-bottom:8px;text-align:right">
+          <div style="font-size:11px;color:var(--mut);font-weight:700;margin-bottom:3px">Race goal</div>
+          <div style="font-size:20px;font-weight:800;color:var(--gold)">4:59:59</div>
+          <div style="font-size:11px;color:var(--mut);margin-top:4px">MAF ≤<span id="h-maf" style="color:var(--acc);font-weight:800">143</span> bpm</div>
+          <div style="font-size:11px;color:var(--mut);margin-top:2px">Week <span id="h-wkn" style="color:var(--pur);font-weight:800">—</span> of <span id="h-wktotal" style="color:var(--mut)">—</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr">
+      <div style="padding:13px 8px;text-align:center;border-right:1px solid rgba(255,255,255,.06)">
+        <div id="cd-h" style="font-size:30px;font-weight:800;color:var(--txt);font-variant-numeric:tabular-nums">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em">hours</div>
+      </div>
+      <div style="padding:13px 8px;text-align:center;border-right:1px solid rgba(255,255,255,.06)">
+        <div id="cd-m" style="font-size:30px;font-weight:800;color:var(--txt);font-variant-numeric:tabular-nums">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em">minutes</div>
+      </div>
+      <div style="padding:13px 8px;text-align:center">
+        <div id="cd-s" style="font-size:30px;font-weight:800;color:var(--acc);font-variant-numeric:tabular-nums">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em">seconds</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUOTE -->
+  <div class="quote-card" id="h-quote"><em>Loading…</em><cite id="h-qauth"></cite></div>
+
+  <!-- TODAY + TOMORROW -->
+  <div class="card">
+    <div class="card-hd">Today's workout <span id="h-today-dt" style="font-size:10px;font-weight:600;color:var(--mut);text-transform:none;letter-spacing:0"></span></div>
+    <div class="card-bd">
+      <div id="h-today-type" style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--acc)">—</div>
+      <div id="h-today-note" class="sub" style="margin-bottom:14px;font-size:13px">—</div>
+      <div class="g2" style="gap:8px">
+        <div class="tile"><div class="label">Distance</div><div id="h-today-dist" style="font-size:17px;font-weight:800;font-variant-numeric:tabular-nums">—</div></div>
+        <div class="tile"><div class="label">HR ceiling</div><div id="h-today-hr" style="font-size:17px;font-weight:800;color:var(--acc)">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Simple diet plan</div>
+    <div class="card-bd">
+      <div id="h-diet-simple" class="simple-diet-grid"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Intelligent modes</div>
+    <div class="card-bd">
+      <div id="h-modes" class="mode-row"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Tomorrow <span id="h-tmr-dt" style="font-size:10px;font-weight:600;color:var(--mut);text-transform:none;letter-spacing:0"></span></div>
+    <div class="card-bd" style="padding:14px 16px">
+      <div id="h-tmr-type" style="font-size:15px;font-weight:800;margin-bottom:5px;color:var(--txt2)">—</div>
+      <div id="h-tmr-note" style="font-size:13px;color:var(--mut);line-height:1.55">—</div>
+    </div>
+  </div>
+
+  <!-- QUICK STATS -->
+  <div class="g4" style="margin-bottom:12px">
+    <div class="stat"><div class="lb">Done</div><div class="v" id="h-done" style="color:var(--acc);font-size:18px">0</div><div class="sl">mi this wk</div></div>
+    <div class="stat"><div class="lb">Target</div><div class="v" id="h-tgt" style="color:var(--pur);font-size:18px">—</div><div class="sl">mi plan</div></div>
+    <div class="stat"><div class="lb">Knee</div><div class="v" id="h-knee" style="font-size:18px">—</div><div class="sl">last log</div></div>
+    <div class="stat"><div class="lb">Water</div><div class="v" id="h-water" style="color:var(--blu);font-size:18px">—</div><div class="sl">glasses</div></div>
+  </div>
+
+  <!-- REMOTE WORKER SCHEDULE -->
+  <div class="card">
+    <div class="card-hd">Daily schedule — remote job</div>
+    <div class="card-bd" style="padding:12px 16px">
+      <div id="h-schedule"></div>
+    </div>
+  </div>
+
+  <!-- PREHAB REMINDER -->
+  <div class="focus red" style="font-size:13px">
+    <strong style="color:var(--red);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Daily PFPS prehab — every day without exception</strong>
+    <strong style="color:var(--txt2)">Morning (10 min):</strong> Clamshells 3×15 · Band walks 3×20 · Single-leg glute bridge 3×12 · Hip flexor AIS 8×1.5 s<br>
+    <strong style="color:var(--txt2)">Post-run (8 min):</strong> Foam roll IT band 90 s → quads 90 s → calves 60 s · Massage gun 2 min · Calf eccentrics 3×15
+  </div>
+
+</section>
+
+<!-- ══════════ LOG ════════════════════════════════════════════════ -->
+<section id="s-log" class="screen">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div>
+      <div style="font-size:22px;font-weight:800">Week <span id="log-wkn">—</span></div>
+      <div id="log-wkd" class="sub" style="margin-top:2px;font-size:13px">—</div>
+    </div>
+    <span id="log-saved" style="font-size:12px;font-weight:700;color:var(--acc);opacity:0;transition:.3s">✓ Saved</span>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <button class="wk-nav" id="log-prev">‹</button>
+    <div style="flex:1">
+      <div class="prog" style="height:7px"><div id="log-prog" style="width:0%;background:linear-gradient(90deg,var(--acc),var(--blu))"></div></div>
+      <div style="font-size:10px;color:var(--mut);text-align:center;margin-top:4px" id="log-prog-lbl"></div>
+    </div>
+    <button class="wk-nav" id="log-next">›</button>
+  </div>
+
+  <!-- WEEK ADHERENCE -->
+  <div class="g3" style="margin-bottom:10px">
+    <div class="stat"><div class="lb">Target</div><div class="v" id="lw-tgt" style="color:var(--pur)">—</div><div class="sl">miles</div></div>
+    <div class="stat"><div class="lb">Logged</div><div class="v" id="lw-done" style="color:var(--acc)">0</div><div class="sl">miles</div></div>
+    <div class="stat"><div class="lb">Adherence</div><div class="v" id="lw-pct" style="color:var(--gold)">0%</div><div class="sl">done</div></div>
+  </div>
+  <div class="prog" style="height:7px;margin-bottom:12px"><div id="lw-bar" style="width:0%;background:linear-gradient(90deg,var(--acc),var(--gold))"></div></div>
+
+  <div id="log-focus" class="focus blu" style="font-size:13px">—</div>
+  <div id="log-days"></div>
+</section>
+
+<!-- ══════════ COACH ══════════════════════════════════════════════ -->
+<section id="s-coach" class="screen">
+  <div class="section-title" style="margin-bottom:3px">AI Coach</div>
+  <div class="sub" style="margin-bottom:14px">Powered by Anthropic Claude · Analyzes logs · Adjusts plan dynamically</div>
+
+  <div class="card">
+    <div class="card-hd">Anthropic API key</div>
+    <div class="card-bd">
+      <input type="password" id="coach-key" placeholder="sk-ant-api03-… (stored locally only)">
+      <div class="hint" style="margin-top:8px">Stored only in your browser's localStorage. Sent only to <strong style="color:var(--acc)">api.anthropic.com</strong> over HTTPS. Never shared with anyone else.</div>
+      <button class="btn secondary" id="coach-save-key" style="margin-top:10px;padding:11px">Save key</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Your training zones</div>
+    <div class="card-bd" style="padding:12px 16px"><div id="coach-zones"></div></div>
+  </div>
+
+  <button class="btn gold-btn" id="coach-analyze" style="margin-bottom:12px;font-size:16px;padding:16px;font-size:15px">
+    ✦ &nbsp;Analyze training &amp; update recommendations
+  </button>
+
+  <div id="coach-loading" style="display:none;text-align:center;padding:28px 0">
+    <div style="font-size:13px;color:var(--mut);margin-bottom:12px">Analyzing your complete training history…</div>
+    <div class="prog" style="width:200px;margin:0 auto;height:3px"><div id="coach-load-bar" style="width:70%;background:var(--gold);animation:pulse 1.2s ease-in-out infinite"></div></div>
+  </div>
+
+  <div id="coach-response" style="display:none">
+    <div style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px" id="coach-ts"></div>
+    <div class="coach-out" id="coach-out"></div>
+    <button class="btn ghost" id="coach-rerun" style="font-size:13px;padding:10px">Re-analyze</button>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <div class="card-hd">Backup &amp; restore</div>
+    <div class="card-bd">
+      <div class="btn-row">
+        <button class="btn secondary" id="coach-export">↓ Export backup</button>
+        <label class="btn ghost" for="coach-import">↑ Import backup</label>
+        <input id="coach-import" type="file" accept="application/json" style="display:none">
+      </div>
+      <div class="hint" style="margin-top:10px">Export weekly to keep your logs safe. Import on any device to restore all data.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PLAN ════════════════════════════════════════════════ -->
+<section id="s-plan" class="screen">
+  <div class="section-title" style="margin-bottom:3px">Training Plan</div>
+  <div id="plan-subtitle" class="sub" style="margin-bottom:14px">Tap any week to expand day-by-day detail</div>
+
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+    <span class="badge ph-rehab">Rehab</span><span class="badge ph-return">Return</span>
+    <span class="badge ph-base">MAF Base</span><span class="badge ph-build">Build</span>
+    <span class="badge ph-peak">Peak</span><span class="badge ph-taper">Taper</span>
+  </div>
+
+  <select id="plan-filter" style="margin-bottom:12px">
+    <option value="all">All phases</option>
+    <option value="0">Phase 0 — Medical Rehab</option>
+    <option value="1">Phase 1 — Walk-Run Return</option>
+    <option value="2">Phase 2 — MAF Base</option>
+    <option value="3">Phase 3 — Marathon Build</option>
+    <option value="4">Phase 4 — Peak &amp; Taper</option>
+  </select>
+
+  <div id="plan-list"></div>
+</section>
+
+<!-- ══════════ PROFILE ════════════════════════════════════════════ -->
+<section id="s-profile" class="screen">
+  <div class="section-title" style="margin-bottom:3px">Athlete Profile</div>
+  <div class="sub" style="margin-bottom:14px">All zones, MAF, and BMI auto-calculate from your details</div>
+
+  <div class="card">
+    <div class="card-hd">Personal info</div>
+    <div class="card-bd" style="display:flex;flex-direction:column;gap:10px">
+      <input id="p-name" placeholder="Your full name" type="text">
+      <div class="g2">
+        <div><div class="label">Date of birth</div><input id="p-dob" type="date" value="1987-05-01"></div>
+        <div><div class="label">Sex</div><select id="p-sex"><option value="M">Male</option><option value="F">Female</option></select></div>
+      </div>
+      <div class="g2">
+        <div><div class="label">Height (e.g. 6'0")</div><input id="p-height" placeholder="6'0&quot;" value="6'0&quot;"></div>
+        <div><div class="label">Weight (lbs)</div><input id="p-weight" type="number" step="0.5" value="154"></div>
+      </div>
+      <div class="g3">
+        <div class="stat"><div class="lb">Age</div><div class="v" id="p-age" style="color:var(--acc);font-size:20px">—</div></div>
+        <div class="stat"><div class="lb">BMI</div><div class="v" id="p-bmi" style="color:var(--gold);font-size:20px">—</div></div>
+        <div class="stat"><div class="lb">HRmax</div><div class="v" id="p-hrmax" style="color:var(--red);font-size:20px">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Plan dates</div>
+    <div class="card-bd" style="display:flex;flex-direction:column;gap:10px">
+      <div class="g2">
+        <div><div class="label">Plan start date</div><input id="p-start" type="date" value="2026-04-06"></div>
+        <div><div class="label">Race date</div><input id="p-race" type="date" value="2027-01-17"></div>
+      </div>
+      <div class="focus gold" style="font-size:13px;margin-bottom:0">
+        <strong style="color:var(--gold)">Chevron Houston Marathon</strong> — Sunday, January 17, 2027 · Start time 7:00 AM. Total weeks: <span id="p-totalwks" style="color:var(--acc);font-weight:800">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Conditions &amp; fitness</div>
+    <div class="card-bd" style="display:flex;flex-direction:column;gap:10px">
+      <div><div class="label">Current injuries / conditions</div>
+        <textarea id="p-injury" rows="2" placeholder="e.g. Runner's knee (PFPS), walking still causes pain"></textarea></div>
+      <div class="g2">
+        <div><div class="label">Resting HR (bpm)</div><input id="p-rhr" type="number" value="55" min="30" max="100"></div>
+        <div><div class="label">Max HR (0 = auto)</div><input id="p-mhr" type="number" value="0" min="0" max="230"></div>
+      </div>
+      <div class="g2">
+        <div><div class="label">Half-marathon PR</div><input id="p-half" value="2:49:59"></div>
+        <div><div class="label">Easy pace /mi</div><input id="p-easy" value="13:30"></div>
+      </div>
+      <div class="g2">
+        <div class="stat"><div class="lb">MAF HR</div><div class="v" id="p-maf" style="color:var(--acc);font-size:20px">—</div><div class="sl">running ceiling</div></div>
+        <div class="stat"><div class="lb">Injury MAF</div><div class="v" id="p-mafi" style="color:var(--txt2);font-size:20px">—</div><div class="sl">active injury</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Training zones (Karvonen)</div>
+    <div class="card-bd" style="padding:12px 16px"><div id="p-zones"></div>
+      <div class="hr"></div>
+      <div class="g2">
+        <div class="tile stat"><div class="lb">Marathon pace</div><div id="p-mpace" style="font-size:15px;font-weight:800;color:var(--gold)">11:27 /mi</div></div>
+        <div class="tile stat"><div class="lb">Tempo pace</div><div id="p-tpace" style="font-size:15px;font-weight:800;color:var(--blu)">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div><div class="label">Coach notes (diet, equipment, conditions)</div>
+    <textarea id="p-notes" rows="3" style="margin-bottom:10px" placeholder="Eats meat, chicken, fish, eggs, South Indian food, paneer, tofu, nuts, oatmeal, veggies, fruits. Texas summer heat. Standing desk job…"></textarea></div>
+
+  <button class="btn" id="p-save" style="margin-bottom:10px;font-size:15px;padding:15px">Save &amp; recalculate everything</button>
+  <button class="btn danger" id="p-reset" style="margin-bottom:4px">Reset all data</button>
+</section>
+
+
+<nav class="nav">
+  <button data-tab="home" class="on"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5"/><path d="M6.5 9.5V20h11V9.5"/></svg></span><span class="lbl">Home</span></button>
+  <button data-tab="log"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="3.3"/></svg></span><span class="lbl">Log</span></button>
+  <button data-tab="coach"><span class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.5 13.9 8l4.6 1.9-4.6 1.9L12 16.5l-1.9-4.7L5.5 9.9 10.1 8 12 3.5Z"/><path d="M18.2 14.8 19.1 17l2.2.9-2.2.9-.9 2.2-.9-2.2-2.2-.9 2.2-.9.9-2.2Z"/></svg></span><span class="lbl">Coach</span></button>
+  <button data-tab="plan"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 4 7 8-7 8-7-8 7-8Z"/></svg></span><span class="lbl">Plan</span></button>
+  <button data-tab="profile"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v16H7z"/><path d="M11 7h2M11 12h2M11 17h2"/></svg></span><span class="lbl">Profile</span></button>
+</nav>
+</div>
+<div id="toast"></div>
+
+<style>
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+</style>
+
+<script>
+(function(){'use strict';
+const $=id=>document.getElementById(id);
+const KEY='ht27-v5';
+
+/* ── QUOTES ─────────────────────────────────────────────── */
+const QQ=[
+  ["No human is limited.","Eliud Kipchoge"],["The miracle isn't that I finished. The miracle is that I had the courage to start.","John Bingham"],
+  ["Pain is temporary. Quitting lasts forever.","Lance Armstrong"],["Don't dream of winning. Train for it.","Mo Farah"],
+  ["Run when you can, walk if you have to, crawl if you must; just never give up.","Dean Karnazes"],
+  ["The body does not want you to do this. As you run, it tells you to stop but the mind must be strong.","Haile Gebrselassie"],
+  ["I hated every minute of training, but I said: don't quit. Suffer now and live the rest of your life as a champion.","Muhammad Ali"],
+  ["Champions are made in the hours when they could rest and chose not to.","Mia Hamm"],
+  ["It does not matter how slowly you go, as long as you do not stop.","Confucius"],
+  ["The difference between the impossible and the possible lies in a person's determination.","Tommy Lasorda"],
+  ["Most people run a race to see who is fastest. I run to see who has the most guts.","Steve Prefontaine"],
+  ["Out on the roads there is fitness and self-discovery and the persons we were destined to be.","George Sheehan"],
+  ["First, be consistent. Second, be consistent. Third, be consistent.","Jack Daniels"],
+  ["A runner must run with dreams in his heart, not money in his pocket.","Emil Zatopek"],
+  ["You have to expect things of yourself before you can do them.","Michael Jordan"],
+  ["Hard work beats talent when talent doesn't work hard.","Tim Notke"],
+  ["Success is the sum of small efforts repeated day in and day out.","Robert Collier"],
+  ["Today I will do what others won't, so tomorrow I can accomplish what others can't.","Jerry Rice"],
+  ["Make each day your masterpiece.","John Wooden"],["Set your goals high, and don't stop till you get there.","Bo Jackson"],
+  ["Without self-discipline, success is impossible, period.","Lou Holtz"],["Adversity causes some men to break; others to break records.","William A. Ward"],
+  ["The only way to define your limits is by going beyond them.","Arthur C. Clarke"],
+  ["Your body will argue that there is no justifiable reason to continue. Your only recourse is to call on your spirit.","Tim Noakes"],
+  ["We run, not because we think it is doing us good, but because we enjoy it and cannot help ourselves.","Sir Roger Bannister"],
+  ["Running is the greatest metaphor for life, because you get out of it what you put into it.","Oprah Winfrey"],
+  ["Somewhere in the world, someone is training when you are not. When you race him, he will win.","Tom Fleming"],
+  ["It's not the mountain we conquer, but ourselves.","Sir Edmund Hillary"],["The finish line is just the beginning of a whole new race.","Unknown"],
+  ["An athlete cannot run with money in his pockets. He must run with hope in his heart.","Emil Zatopek"],
+  ["The voice in your head that says you can't do this is a liar.","Unknown"],
+  ["You are only one workout away from a good mood.","Unknown"],["Believe in yourself and all that you are.","Christian D. Larson"],
+  ["The pain you feel today will be the strength you feel tomorrow.","Arnold Schwarzenegger"],
+  ["Champions do not become champions when they win the event, but in the hours spent preparing for it.","Michael Jordan"],
+  ["Never let the fear of striking out keep you from playing the game.","Babe Ruth"],
+  ["Excellence is not a destination; it is a continuous journey that never ends.","Brian Tracy"],
+  ["When you reach the end of your rope, tie a knot in it and hang on.","Franklin D. Roosevelt"],
+  ["Talent wins games, but teamwork and intelligence win championships.","Michael Jordan"],
+  ["Do not let what you cannot do interfere with what you can do.","John Wooden"],
+  ["Winning isn't everything, but wanting to win is.","Vince Lombardi"],["Mental is to physical as four is to one.","Bobby Knight"],
+  ["If you feel bad at 10 miles, remember you felt good at 9.","Dean Karnazes"],
+  ["The human body can do so much. Then the heart and spirit must take over.","Sanya Richards-Ross"],
+];
+
+/* ── 7 MEAL PLANS — mixed omnivore + South Indian ────────── */
+/* Each: [icon, time, text] */
+const MEALS=[
+  // Day 0 (Mon) - High Carb
+  [["🌅","5:30 AM","Pre-dawn: 1 banana + 3 dates + green tea with ginger"],
+   ["🍳","7:00 AM","Breakfast: 3-egg omelette with onions, tomato, green chilli + 2 idlis with sambar + coconut chutney"],
+   ["🥜","10:00 AM","Mid-morning: 1 handful mixed nuts (almonds, walnuts, cashews) + tart cherry juice 8 oz (anti-inflammatory PFPS protocol)"],
+   ["🍗","1:00 PM","Lunch: Grilled chicken breast 150 g + brown rice 1 cup + vegetable curry (brinjal/beans) + raita + salad"],
+   ["🍌","4:00 PM","Pre-workout: Banana + 2 tbsp peanut butter + 16 oz water"],
+   ["🐟","7:30 PM","Dinner: Grilled fish (salmon/tilapia) 150 g + quinoa + palak paneer (spinach + paneer) + chapati"],
+   ["💪","Post-workout","Recovery: 30 g whey or pea protein shake + banana + oat milk OR 2 boiled eggs + fruit"],
+   ["💧","Water","Target: 12–14 glasses. Add electrolytes (LMNT/Nuun) after runs >60 min. Turmeric milk at bedtime."]],
+  // Day 1 (Tue) - Strength Day
+  [["🌅","6:00 AM","Pre-workout: 2 boiled eggs + 1 toast + coffee with oat/full-fat milk"],
+   ["🥣","7:30 AM","Breakfast: Oatmeal 1.5 cups cooked + banana sliced + walnuts + flaxseed 1 tbsp + honey drizzle"],
+   ["🥛","10:30 AM","Mid-morning: Tart cherry juice 8 oz + mixed nuts 20 g + 1 apple"],
+   ["🍛","1:00 PM","Lunch: Sambar rice (South Indian) with drumstick/veggies + papad + buttermilk + mango pickle"],
+   ["🥚","4:00 PM","Pre-workout: Egg salad (2 eggs) + whole grain crackers OR paneer tikka 80 g + lemon"],
+   ["🍗","7:30 PM","Dinner: Chicken curry (homestyle) + 2 chapati + steamed broccoli + cucumber salad with lemon"],
+   ["💪","Post-workout","Recovery: Protein-rich meal within 30 min. Paneer bhurji + 1 chapati OR chicken + rice."],
+   ["💧","Water","Target: 13 glasses (strength day demands more). Coconut water post-workout for electrolytes."]],
+  // Day 2 (Wed) - Endurance Day
+  [["🌅","5:30 AM","Pre-run: 1 banana + 3 dates. Run on light stomach for MAF fat adaptation."],
+   ["🍚","7:30 AM","Post-run breakfast: Idli sambar (3 idlis) + coconut chutney + 1 boiled egg + filter coffee"],
+   ["🥜","10:30 AM","Mid-morning: Roasted chana (chickpeas) 30 g + tart cherry juice + 1 orange"],
+   ["🐟","1:00 PM","Lunch: Fish curry (Chettinad/Kerala style) + brown rice + vegetable poriyal + rasam + pickle"],
+   ["🥗","4:30 PM","Afternoon: Greek yogurt/curd 200 ml + cucumber + chia seeds OR paneer cubes + mint chutney"],
+   ["🍗","7:30 PM","Dinner: Grilled chicken thighs 150 g + vegetable upma + tomato soup + salad with olive oil"],
+   ["🥚","Post-run","Recovery: 2 scrambled eggs + toast + tart cherry juice within 30 min post-run"],
+   ["💧","Water","Target: 14 glasses (long run day). Replace 500 ml per 30 min run time. Pre-load evening before."]],
+  // Day 3 (Thu) - Recovery Day
+  [["☀️","7:00 AM","Breakfast: Masala dosa (1 large) + sambar + coconut chutney + 1 boiled egg on the side"],
+   ["🥛","10:00 AM","Mid-morning: Warm turmeric milk (full-fat or oat) + soaked almonds 6 + dried figs 3"],
+   ["🍗","1:00 PM","Lunch: Chicken biryani (light homestyle) OR curd rice + vegetable curry + papad + pickle"],
+   ["🌰","4:00 PM","Afternoon: 1 handful mixed nuts + seasonal fruit (mango/banana/apple) + tart cherry juice"],
+   ["🐟","7:30 PM","Dinner: Grilled fish 150 g + vegetable khichdi (moong dal + rice) + curd + salad"],
+   ["🥚","Evening","Light snack if hungry: 1 boiled egg + 1 whole grain roti OR paneer slices + chutney"],
+   ["💧","Water","Target: 10–12 glasses. Recovery day — hydrate well, add coconut water if sweating in Texas heat."]],
+  // Day 4 (Fri) - Pre Long Run Carb Load
+  [["🌅","6:00 AM","PRE-LONG RUN START: Banana + dates + 500 ml water — eat 90 min before running"],
+   ["🍚","7:30 AM","Breakfast: Pongal (rice + moong dal) 2 cups + vegetable sambar + coconut chutney — HIGH CARB"],
+   ["🏃","During","Fuel every 40 min after mile 8: 3 dates + pinch salt OR energy gel + 8 oz electrolytes"],
+   ["🍗","Post-run (30 min)","Recovery meal: Chicken + rice (2:1 carb:protein) + coconut water OR protein shake + banana"],
+   ["🥣","12:30 PM","Lunch: Brown rice 1.5 cups + dal + vegetable avial + appalam — replenish glycogen"],
+   ["🌰","3:30 PM","Snack: Mixed nuts + banana + tart cherry juice (double dose: 2 glasses post-long-run)"],
+   ["🍛","7:30 PM","Dinner: Whole wheat pasta with egg + chicken Bolognese OR lemon rice + egg curry + salad"],
+   ["💧","Water","Target: 16+ glasses. MANDATORY on long run day. LMNT or Nuun in water all day."]],
+  // Day 5 (Sat) - Active Recovery
+  [["☀️","8:00 AM","Late breakfast: Rava upma with vegetables + 2 boiled eggs + filter coffee with full-fat milk"],
+   ["🥛","10:30 AM","Mid-morning: Protein smoothie — banana + milk + peanut butter + oats + honey — blended"],
+   ["🍗","1:30 PM","Lunch: Chicken chettinad curry + 2 chapati + cucumber raita + mixed salad + lemon"],
+   ["🌰","4:00 PM","Afternoon: Paneer tikka 100 g (homemade) + mint chutney + tart cherry juice"],
+   ["🐟","7:30 PM","Dinner: Grilled mackerel/salmon + vegetable pulao + dal + salad — anti-inflammatory focus"],
+   ["🥛","Night","Recovery: Turmeric golden milk (warm milk + turmeric + pepper + ginger + cinnamon) — sleep aid"],
+   ["💧","Water","Target: 12–14 glasses. Post long-run day: hydrate deeply. Magnesium-rich foods today (nuts, greens)."]],
+  // Day 6 (Sun) - Rest & Recharge
+  [["🍳","8:30 AM","Relaxed breakfast: South Indian thali — idiyappam + egg curry + coconut milk + filter coffee"],
+   ["🥜","11:00 AM","Mid-morning: Seasonal fruits (mango, banana, papaya) + soaked almonds + walnuts + cashews"],
+   ["🍛","2:00 PM","Lunch: Full Sunday meal — fish curry + rice + sambar + rasam + vegetable poriyal + pickle + papad + payasam"],
+   ["☕","4:30 PM","Afternoon: Masala chai + roasted chana 30 g + 2 dates"],
+   ["🥗","7:30 PM","Light dinner: Vegetable soup + egg fried rice OR paneer + mixed vegetable curry + 1 chapati"],
+   ["💧","Water","Target: 10–12 glasses. Rest day — eat well, sleep 8–9 hours. Weekly meal prep for Monday."]],
+];
+
+/* ── STRENGTH CIRCUITS per phase ──────────────────────────── */
+const STRENGTH={
+  0:{name:"Phase 0 — Medical Rehab Circuit",color:"var(--red)",items:[
+    {n:"Quad sets",r:"3×20 reps",d:"Lie flat, press back of knee down, contract quad, hold 5 seconds. No movement."},
+    {n:"Straight-leg raises",r:"3×15 each",d:"Lying flat, one leg bent, raise straight leg to 45°. Slow and controlled."},
+    {n:"Side-lying hip abduction",r:"3×15 each",d:"Side-lying, raise top leg to 30–45°. Targets hip abductors — key for PFPS."},
+    {n:"Terminal knee extensions (band)",r:"3×20 reps",d:"Band behind knee, seated. Straighten knee against resistance. No full squat."},
+    {n:"Calf raises (seated bilateral)",r:"3×20 reps",d:"Seated, both feet. Raise heels high. Important for patellar tendon health."},
+    {n:"Hip flexor AIS stretch",r:"8×1.5 s each",d:"Kneeling lunge, lean forward slightly. Hold 1.5 sec, release, repeat. NOT static."},
+    {n:"Ice knee",r:"15 min after",d:"Wrap ice in thin cloth. Apply to knee 15 min. 3× daily during acute phase."},
+  ]},
+  1:{name:"Phase 1 — Walk-Run Activation",color:"var(--gold)",items:[
+    {n:"Clamshells (light band)",r:"3×15 each",d:"Side-lying, band above knees, feet together. Open like a clam. Don't rotate hip."},
+    {n:"Lateral band walks",r:"3×20 each way",d:"Band above knees, slight squat. Step sideways keeping toes forward. Burns the glutes."},
+    {n:"Single-leg glute bridge",r:"3×12 each",d:"Lie on back, one leg raised, drive hip up. Hold 2 sec at top. Key exercise."},
+    {n:"Monster walks",r:"3×15 steps each",d:"Band at ankles, squat position, walk forward then backward. Hip abductors."},
+    {n:"Calf raise eccentrics",r:"3×15 reps",d:"Stand on step edge. Raise on 2 legs, lower on 1 leg (3 sec). Builds patellar tendon."},
+    {n:"Hip flexor stretch (AIS)",r:"8×1.5 s each",d:"Kneeling lunge position. Contract glute, lean forward. Releases hip tightness."},
+    {n:"Wall sit",r:"Only if knee ≤1/10",d:"30 seconds maximum. Stop immediately if knee pain exceeds 1/10."},
+  ]},
+  2:{name:"Phase 2 — MAF Base Strength",color:"var(--acc)",items:[
+    {n:"Clamshells (medium band)",r:"3×15 each",d:"Progress to heavier band. Maintain hip alignment. Don't let pelvis rock."},
+    {n:"Single-leg glute bridge",r:"3×15 each",d:"Can add 5–10 lb plate on hip for progression. Hold 2 sec. Drive knee away from midline."},
+    {n:"Step-ups (4-inch box)",r:"3×12 each",d:"Slow eccentric: step up on affected leg, lower contralateral leg 3 sec. Builds VMO."},
+    {n:"Bulgarian split squat (BW)",r:"2×10 each",d:"Rear foot elevated. Knee tracks over 2nd toe. Add weight only when pain ≤1/10."},
+    {n:"Single-leg RDL (bodyweight)",r:"2×10 each",d:"Hinge at hip, rear leg floats back. Challenges posterior chain and hip stability."},
+    {n:"Lateral band walks",r:"3×20 each",d:"Progress to heavier band. Wide stance. Keep slight squat throughout."},
+    {n:"Calf raise eccentrics",r:"3×15 reps",d:"Slow 3-sec lowering on one leg. 3× per week minimum for PFPS protection."},
+  ]},
+  3:{name:"Phase 3 — Marathon Build Strength",color:"var(--blu)",items:[
+    {n:"Bulgarian split squat (dumbbell)",r:"3×10 each",d:"Add 15–25 lb dumbbell in each hand. Key strength move for marathon runners."},
+    {n:"Single-leg RDL (dumbbell)",r:"3×10 each",d:"20–30 lb dumbbell. Controls hip drop under fatigue — mimics late-race mechanics."},
+    {n:"Step-downs (eccentric)",r:"3×15 each",d:"Stand on box. Slowly lower contralateral foot to tap floor (3 sec). Most important."},
+    {n:"Lateral step-ups with band",r:"3×12 each",d:"Step sideways onto box. Band provides resistance. Targets glute medius."},
+    {n:"Copenhagen adductor plank",r:"3×30 s each",d:"Side plank with top foot on bench. Builds groin and hip stability under marathon load."},
+    {n:"Glute bridge with band",r:"3×15 reps",d:"Band above knees. Push knees out throughout. Posterior chain activation."},
+    {n:"Calf raise eccentrics",r:"2×15 reps",d:"Maintenance. Continue throughout marathon build."},
+  ]},
+  4:{name:"Phase 4 — Taper Maintenance",color:"var(--pur)",items:[
+    {n:"Bodyweight squats",r:"2×15 reps",d:"Light and controlled. Maintain joint lubrication during taper."},
+    {n:"Single-leg balance",r:"30 s each side",d:"Eyes open, then closed. Proprioception work for race-day ankle stability."},
+    {n:"Calf raises (bilateral)",r:"2×15 reps",d:"Light, no eccentric overload. Just maintenance."},
+    {n:"Lateral band walks",r:"2×15 each",d:"Light band only. Keep glutes activated."},
+    {n:"Hip flexor stretch",r:"60 s each side",d:"Full static hold during taper — helps range of motion for race day."},
+  ]},
+};
+
+/* ── STATE ───────────────────────────────────────────────── */
+const DEF={
+  profile:{name:"",dob:"1987-05-01",sex:"M",height:"6'0\"",weight:"154",
+    injury:"Runner's knee (PFPS) — walking still causes pain",
+    rhr:"55",mhr:"0",half:"2:49:59",easy:"13:30",
+    startDate:"2026-04-06",raceDate:"2027-01-17",
+    notes:"Eats meat, chicken, fish, eggs, South Indian food, paneer, tofu, nuts, oatmeal, veggies, fruits. Texas heat. Standing desk remote job. Garmin Fenix 7 Pro, IC4 bike, Horizon 7 treadmill, foam roller, massage gun, resistance band."},
+  logs:{},coachKey:"",lastCoach:null
+};
+let ST=loadState();
+
+function loadState(){
+  try{const v=localStorage.getItem(KEY);if(v){const d=JSON.parse(v);return {profile:{...DEF.profile,...(d.profile||{})},logs:d.logs||{},coachKey:d.coachKey||"",lastCoach:d.lastCoach||null};}
+  }catch(e){}return JSON.parse(JSON.stringify(DEF));
+}
+function saveState(){try{localStorage.setItem(KEY,JSON.stringify(ST));}catch(e){toast("Storage full — export backup now");}}
+
+/* ── DATE HELPERS ────────────────────────────────────────── */
+function pad(n){return String(n).padStart(2,"0");}
+function parseDate(s){if(!s)return null;const d=new Date(s+"T00:00:00");return isNaN(d)?null:d;}
+function planStart(){return parseDate(ST.profile.startDate)||new Date("2026-04-06T00:00:00");}
+function raceDate(){return parseDate(ST.profile.raceDate)||new Date("2027-01-17T07:00:00");}
+function totalWeeks(){const diff=Math.round((raceDate()-planStart())/6048e5);return Math.max(1,diff);}
+function curWeekIdx(){const diff=Math.floor((Date.now()-planStart())/6048e5);return Math.min(totalWeeks(),Math.max(1,diff+1));}
+function weekStartDate(idx){const d=new Date(planStart());d.setDate(d.getDate()+(idx-1)*7);return d;}
+function weekEndDate(idx){const d=weekStartDate(idx);d.setDate(d.getDate()+6);return d;}
+function fmtDate(d){return d.toLocaleDateString("en-US",{month:"short",day:"numeric"});}
+function fmtFull(d){return d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});}
+function todayISO(){return new Date().toISOString().slice(0,10);}
+function dow(){return new Date().getDay();}
+
+/* ── PROFILE CALCULATIONS ────────────────────────────────── */
+function calcAge(dob){
+  if(!dob)return 38;
+  const d=new Date(dob),n=new Date();
+  let a=n.getFullYear()-d.getFullYear();
+  if(n.getMonth()<d.getMonth()||(n.getMonth()===d.getMonth()&&n.getDate()<d.getDate()))a--;
+  return a;
+}
+function calcHeightIn(s){
+  s=String(s||"72");
+  const m=s.match(/(\d+)['\s]*[fF]?.*?(\d+)/);
+  if(m)return parseInt(m[1])*12+parseInt(m[2]);
+  const m2=s.match(/^(\d+)$/);
+  if(m2)return parseInt(m2[1]);
+  return 72;
+}
+function calcBMI(wLbs,hStr){
+  const w=(parseFloat(wLbs)||154)*0.453592;
+  const h=calcHeightIn(hStr)*0.0254;
+  return (w/(h*h)).toFixed(1);
+}
+function calcMAF(){
+  const age=calcAge(ST.profile.dob);
+  const hasInj=/pain|pfps|injury|knee/i.test(ST.profile.injury||"");
+  return 180-age-(hasInj?5:0);
+}
+function calcHRMax(){
+  const mhr=parseFloat(ST.profile.mhr)||0;
+  return mhr>120?mhr:220-calcAge(ST.profile.dob);
+}
+function calcZones(){
+  const rhr=parseFloat(ST.profile.rhr)||55,hrmax=calcHRMax();
+  const res=Math.max(60,hrmax-rhr);
+  const z=(lo,hi)=>`${Math.round(rhr+res*lo)}–${Math.round(rhr+res*hi)} bpm`;
+  return [{n:"Zone 1 · Recovery",r:z(.50,.60),c:"#64748B"},
+          {n:"Zone 2 · Aerobic/MAF",r:z(.60,.70),c:"#00E5B0"},
+          {n:"Zone 3 · Tempo",r:z(.70,.80),c:"#F5A623"},
+          {n:"Zone 4 · Threshold",r:z(.80,.90),c:"#FF4F6A"},
+          {n:"Zone 5 · Max",r:z(.90,1.00),c:"#9B7FFF"}];
+}
+function parsePace(v){const m=String(v||"").match(/(\d+):(\d+)/);return m?parseInt(m[1])+parseInt(m[2])/60:null;}
+function fmtPace(min){const m=Math.floor(min),s=Math.round((min-m)*60);return `${m}:${pad(s===60?0:s)}`;}
+
+/* ── PHASE ASSIGNMENT ─────────────────────────────────────── */
+function assignPhase(wkIdx,totWks){
+  const f=wkIdx/totWks;
+  if(f<0.10)return 0; // Medical Rehab
+  if(f<0.22)return 1; // Walk-Run
+  if(f<0.58)return 2; // MAF Base
+  if(f<0.85)return 3; // Marathon Build
+  return 4;           // Taper & Race
+}
+const PM=[
+  {n:"Medical Rehab",cls:"ph-rehab",acc:"#FF4F6A",mi:0,lrMult:0},
+  {n:"Walk-Run Return",cls:"ph-return",acc:"#F5A623",mi:.4,lrMult:.45},
+  {n:"MAF Base Build",cls:"ph-base",acc:"#00E5B0",mi:.7,lrMult:.55},
+  {n:"Marathon Build",cls:"ph-build",acc:"#4A9EFF",mi:1,lrMult:.5},
+  {n:"Taper & Race",cls:"ph-taper",acc:"#9B7FFF",mi:.65,lrMult:.4},
+];
+const PHASE_FOCUS=[
+  "POLICE protocol: zero running. IC4 bike (seat high, knee <30°). Ice 3× daily. VMO activation. Gate: walk 20 min flat at ≤1/10 pain.",
+  "Walk-run intervals. HR ≤MAF. Pain gate: ≤2/10 each session. Glute prehab daily. Gate to Phase 2: 5-mi easy run pain-free.",
+  "All runs ≤MAF HR. This is the Maffetone method — pace will feel slow. Trust the process. Every aerobic mile builds the engine.",
+  "First tempo runs. Marathon pace work embedded in long runs. Mileage peaks here. 20-milers. Protect the knee as volume rises.",
+  "Volume drops. Intensity maintained. Taper madness is normal — trust the work. Rest is training. Race pace confidence runs.",
+];
+
+/* ── WEEK MILEAGE TARGETS ─────────────────────────────────── */
+function weekTargetMi(wkIdx,totWks,phase){
+  // Progressive build with built-in recovery weeks every 3rd week
+  const totBuildWks=Math.floor(totWks*.83);
+  const progress=Math.min(1,wkIdx/totBuildWks);
+  const peakMi=45;
+  const startMi=8;
+  let base=startMi+progress*(peakMi-startMi);
+  // 3-week cycle: up-up-down
+  const cyclePos=(wkIdx-1)%3;
+  if(cyclePos===2)base*=0.72;
+  // Phase caps
+  if(phase===0)return 0;
+  if(phase===1)base=Math.min(base,15);
+  if(phase===4)base=Math.max(6,base*.65);
+  return Math.round(base);
+}
+function weekLR(mi,phase){
+  if(phase===0)return 0;
+  if(phase===1)return Math.max(3,Math.round(mi*.45));
+  if(phase===2)return Math.max(6,Math.round(mi*.48));
+  if(phase===3)return Math.max(10,Math.round(mi*.47));
+  return Math.max(0,Math.round(mi*.42));
+}
+
+/* ── DAY SCHEDULES ────────────────────────────────────────── */
+function typeColor(t){
+  const m={Rest:"#3D5A7A",Rehab:"#FF4F6A","IC4 Bike":"#4A9EFF","Walk-Run":"#F5A623",
+    "Easy Run":"#00E5B0","Long Run":"#4A9EFF",Tempo:"#F5A623",Strength:"#9B7FFF",
+    Recovery:"#00B88A",Shakeout:"#00E5B0",RACE:"#FFD700"};
+  return m[t]||"#8EA8CC";
+}
+function getDays(wkIdx,phase,mi,lr){
+  const maf=calcMAF();
+  const mafStr=`≤${maf} bpm`;
+  const base=new Date(weekStartDate(wkIdx));
+  const DNAMES=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const mk=(i,type,note,dist,hr)=>{
+    const d=new Date(base);d.setDate(d.getDate()+i);
+    return{date:d.toISOString().slice(0,10),day:DNAMES[i],type,note,dist,hr};
+  };
+  if(phase===0)return[
+    mk(0,"Rest","Complete rest. Elevate knee. Ice 15 min. Morning prehab circuit.","—","—"),
+    mk(1,"Rehab","VMO: quad sets 3×20, straight-leg raises 3×15, hip abduction 3×15. Terminal knee ext 3×20. No knee bend >30°.","—","—"),
+    mk(2,"IC4 Bike",`Seat at full hip extension (knee bend <30°). HR ≤138. 25–30 min. Stop immediately at any knee twinge.`,"30 min","≤138"),
+    mk(3,"Rehab","Clamshells 3×15, monster walks 3×15, hip flexor AIS stretch 8×1.5 s each side. Log knee pain.","—","—"),
+    mk(4,"Recovery","Foam roll: IT band 90 s, quads 90 s, calves 60 s. Massage gun quads + calves 2 min each. Ice.","—","—"),
+    mk(5,"IC4 Bike",`IC4 40 min ≤138 HR if seated pain-free. Otherwise gentle 20-min flat walk. Anti-inflammatory meal.`,"40 min","≤138"),
+    mk(6,"Rest","8–9 hrs sleep. Elevation + ice if swelling. Log knee pain 1–10 honestly.","—","—"),
+  ];
+  const rem=Math.max(0,mi-lr);
+  const r1=Math.max(3,Math.round(rem*.42));
+  const r2=Math.max(2,rem-r1);
+  if(phase===1)return[
+    mk(0,"Rest","AM prehab full circuit. Foam roll. Log any overnight knee soreness.","—","—"),
+    mk(1,mi<=5?"Walk-Run":"Easy Run",mi<=5?`Walk-run: 1 min run / 2 min walk × 6. HR ≤138. Stop if pain >2/10.`:`${Math.min(r1,4)} mi easy ≤138 HR. Walk anytime. Cadence target 165 spm.`,mi<=5?"2 mi":`${Math.min(r1,4)} mi`,"≤138"),
+    mk(2,"IC4 Bike",`IC4 40 min ≤143 HR. High seat. Cadence 85–90 rpm. Recovery day.`,"40 min","≤143"),
+    mk(3,"Strength","Glute activation: clamshells 3×15, lateral walks 3×20, single-leg bridge 3×12, step-ups 2×12 (pain-free).","45 min","—"),
+    mk(4,"Recovery","Foam roll + massage gun routine. Rest legs for Saturday long run. Extra sleep tonight.","—","—"),
+    mk(5,"Long Run",`${lr||r2} mi — most important session. ALL ≤${maf} HR. Walk freely when needed. Fuel after mile 5.`,`${lr||r2} mi`,mafStr),
+    mk(6,"Recovery",`IC4 20 min Zone 1 OR gentle walk. Full foam roll + massage gun. Tart cherry juice.`,"20 min","Zone 1"),
+  ];
+  if(phase===2)return[
+    mk(0,"Rest","Complete rest. AM prehab non-negotiable (clamshells, bridges, band walks). 10 min.","—","—"),
+    mk(1,"Easy Run",`${r1} mi — ALL ≤${maf} HR. Log pace per mile. Walk if HR spikes above MAF. Cadence 165+ spm.`,`${r1} mi`,mafStr),
+    mk(2,"Strength","Phase 2 strength circuit: clamshells 3×15, bridges 3×15, step-ups 3×12, Bulgarian split squat 2×10, calf eccentrics 3×15.","45 min","—"),
+    mk(3,"Easy Run",`${Math.max(3,Math.round(r2*.7))} mi ≤${maf} HR. Maffetone principle: every slow mile builds fat-burning enzymes, mitochondria, capillaries.`,`${Math.max(3,Math.round(r2*.7))} mi`,mafStr),
+    mk(4,"Recovery","Foam roll IT band 90 s → quads 90 s → calves 60 s. Massage gun. Extra sleep before long run.","—","—"),
+    mk(5,"Long Run",`${lr} mi — ALL ≤${maf} HR. Fuel every 40 min after mile 8. Most important session of the week.`,`${lr} mi`,mafStr),
+    mk(6,"Recovery",`${r2} mi very easy ≤${maf} OR IC4 30 min Zone 1. Active recovery flush.`,`${r2} mi`,mafStr),
+  ];
+  if(phase===3){
+    const tempoMi=Math.max(8,Math.round(rem*.36));
+    const hasTempo=mi>=30;
+    return[
+      mk(0,"Rest","Rest. AM prehab. Check Garmin HRV — if red, today is rest only. No ego on Monday.","—","—"),
+      mk(1,"Easy Run",`${r1} mi Zone 2 ≤${maf} HR. Don't borrow energy from Thursday's tempo session.`,`${r1} mi`,mafStr),
+      mk(2,"Strength","Marathon build strength: Bulgarian split squat 3×10, single-leg RDL 3×10, step-downs 3×15, Copenhagen plank 3×30 s.","45 min","—"),
+      mk(3,hasTempo?"Tempo":"Easy Run",hasTempo?`2 mi warm-up + ${Math.max(4,tempoMi-4)} mi at 11:10/mi + 2 mi cool-down. Garmin pace alert 10:55–11:30/mi.`:`${r2} mi easy Zone 2.`,hasTempo?`${tempoMi} mi`:`${r2} mi`,hasTempo?"Zone 3":mafStr),
+      mk(4,"Easy Run",`${Math.max(3,Math.round(r2*.8))} mi easy ≤${maf} HR. Truly easy — preserve legs for Saturday.`,`${Math.max(3,Math.round(r2*.8))} mi`,mafStr),
+      mk(5,"Long Run",`${lr} mi — first 60% Zone 2, miles ${Math.floor(lr*.7)}–${lr-2} consider marathon pace (11:27/mi). Full fuel protocol.`,`${lr} mi`,mafStr),
+      mk(6,"Recovery","IC4 25 min Zone 1. Full foam roll + massage gun. Protein within 30 min. Sleep 9 hrs.","25 min","Zone 1"),
+    ];
+  }
+  // Phase 4 — Taper & Race
+  const isLastWeek=wkIdx===totalWeeks();
+  if(isLastWeek)return[
+    mk(0,"Rest","Full rest. Carb-load: 400–500 g carbs (idli, rice, pasta, banana, oats). Stay off feet.","—","—"),
+    mk(1,"Rest","Rest. 400–500 g carbs again. Lay out ALL race gear: shoes, Garmin, HRM, bib, nutrition, kit.","—","—"),
+    mk(2,"Shakeout","Easy 2 mi + 4 × 20-sec race-pace strides. Early dinner (carb-rich). In bed by 9 PM.","2 mi","Easy"),
+    mk(3,"Rest","Rest. Continue carb loading. No new foods. Visualize race mile by mile.","—","—"),
+    mk(4,"Rest","Travel if needed. Expo pick-up. Carb dinner. Lay out everything. Bed 9 PM.","—","—"),
+    mk(5,"Rest","10-min easy walk only. Race brief review. In bed 9 PM. Alarm 4:30 AM.","—","—"),
+    mk(6,"RACE",`CHEVRON HOUSTON MARATHON — Jan 17, 2027 · 7:00 AM · Miles 1–6: 11:45/mi easy · Miles 7–20: 11:27/mi · Miles 20+: everything · GOAL 4:59:59!`,"26.2 mi","Race"),
+  ];
+  const r1t=Math.max(3,Math.round(mi*.26));
+  const r2t=Math.max(2,Math.round(mi*.19));
+  return[
+    mk(0,"Rest","Taper — active recovery. Legs feel heavy = glycogen supercompensation. This is good. Trust it.","—","—"),
+    mk(1,"Easy Run",`${r1t} mi easy ≤${maf} HR. Feel the freshness building each week.`,`${r1t} mi`,mafStr),
+    mk(2,"Strength","Light maintenance: bodyweight squats 2×15, calf raises 2×15, band walks 2×15. No fatigue.","20 min","—"),
+    mk(3,mi>=18?"Tempo":"Easy Run",mi>=18?`1 mi warm-up + 3 mi at 11:27/mi race pace + 1 mi cool. Short confidence builder.`:`${r2t} mi easy.`,mi>=18?"5 mi":`${r2t} mi`,mi>=18?"Race pace":mafStr),
+    mk(4,"Easy Run",`${r2t} mi easy. Light and fresh. The taper is working.`,`${r2t} mi`,mafStr),
+    mk(5,lr>0?"Long Run":"Rest",lr>0?`${lr} mi easy. Final long-run race nutrition practice.`:"Complete rest. Trust the training.",lr>0?`${lr} mi`:"—",lr>0?mafStr:"—"),
+    mk(6,"Rest","Rest. Mental visualization: walk the race plan in your mind. Sleep 8+ hrs.","—","—"),
+  ];
+}
+
+/* ── LOGGED MILES per week ────────────────────────────────── */
+function weekMiLogged(wkIdx){
+  const phase=assignPhase(wkIdx,totalWeeks());
+  const mi=weekTargetMi(wkIdx,totalWeeks(),phase);
+  const lr=weekLR(mi,phase);
+  const days=getDays(wkIdx,phase,mi,lr);
+  return Math.round(days.reduce((a,d)=>a+(parseFloat((ST.logs[d.date]||{}).miles)||0),0)*10)/10;
+}
+
+/* ── COUNTDOWN ────────────────────────────────────────────── */
+function tick(){
+  const race=new Date(raceDate());race.setHours(7,0,0,0);
+  const diff=race-Date.now();
+  if(diff<=0){$("cd-days").textContent="0";$("cd-h").textContent="00";$("cd-m").textContent="00";$("cd-s").textContent="00";return;}
+  $("cd-days").textContent=Math.floor(diff/864e5);
+  $("cd-h").textContent=pad(Math.floor((diff%864e5)/36e5));
+  $("cd-m").textContent=pad(Math.floor((diff%36e5)/6e4));
+  $("cd-s").textContent=pad(Math.floor((diff%6e4)/1e3));
+}
+
+/* ── TOAST ────────────────────────────────────────────────── */
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),2400);}
+
+/* ── RENDER HOME ─────────────────────────────────────────── */
+
+function renderHome(){
+  const wkIdx=curWeekIdx(),totWks=totalWeeks();
+  const phase=assignPhase(wkIdx,totWks);
+  const pm=PM[phase];
+  const mi=weekTargetMi(wkIdx,totWks,phase);
+  const lr=weekLR(mi,phase);
+  const days=getDays(wkIdx,phase,mi,lr);
+
+  const nm=ST.profile.name||"Runner";
+  $("h-name").textContent=`${nm}'s Marathon Coach`;
+  $("h-raceinfo").textContent=`Chevron Houston Marathon · ${fmtDate(raceDate())} · 7:00 AM`;
+  const pp=$("h-phase");pp.textContent=pm.n;pp.style.color=pm.acc;pp.style.borderColor=pm.acc+"55";
+  $("h-maf").textContent=calcMAF();
+  $("h-wkn").textContent=wkIdx;
+  $("h-wktotal").textContent=totWks;
+
+  const now=new Date(),doy=Math.floor((now-new Date(now.getFullYear(),0,0))/864e5);
+  const [q,a]=QQ[doy%QQ.length];
+  $("h-quote").querySelector("em").textContent=q;
+  $("h-quote").querySelector("cite").textContent=a;
+
+  const iso=todayISO();
+  const today=days.find(d=>d.date===iso)||days[0];
+  const tmrISO=new Date(new Date().setDate(new Date().getDate()+1)).toISOString().slice(0,10);
+  let tmr=days.find(d=>d.date===tmrISO);
+  if(!tmr&&wkIdx<totWks){const p2=assignPhase(wkIdx+1,totWks),m2=weekTargetMi(wkIdx+1,totWks,p2),l2=weekLR(m2,p2);const nd=getDays(wkIdx+1,p2,m2,l2);tmr=nd.find(d=>d.date===tmrISO)||nd[0];}
+  tmr=tmr||days[days.length-1];
+
+  const tc=typeColor(today.type);
+  $("h-today-dt").textContent=fmtFull(new Date(iso+"T12:00:00"));
+  $("h-today-type").textContent=today.type;$("h-today-type").style.color=tc;
+  $("h-today-note").textContent=today.note;
+  $("h-today-dist").textContent=today.dist;
+  $("h-today-hr").textContent=today.hr;
+  const tmd=new Date();tmd.setDate(tmd.getDate()+1);
+  $("h-tmr-dt").textContent=fmtFull(tmd);
+  $("h-tmr-type").textContent=tmr.type;$("h-tmr-type").style.color=typeColor(tmr.type);
+  $("h-tmr-note").textContent=tmr.note.slice(0,140)+(tmr.note.length>140?"…":"");
+
+  const logged=weekMiLogged(wkIdx);
+  $("h-done").textContent=logged;
+  $("h-tgt").textContent=mi||"—";
+  const recentLogs=Object.values(ST.logs).sort((a,b)=>(b.ts||"").localeCompare(a.ts||""));
+  const lk=recentLogs.find(l=>l.knee)?.knee;
+  const kEl=$("h-knee");kEl.textContent=lk?`${lk}/5`:"—";
+  kEl.style.color=lk?(+lk<=2?"var(--acc)":+lk<=3?"var(--gold)":"var(--red)"):"var(--txt)";
+  const lw=recentLogs.find(l=>l.water)?.water;
+  $("h-water").textContent=lw?`${lw}`:"—";
+
+  const meal = MEALS[new Date(iso+"T12:00:00").getDay()] || MEALS[0];
+  const pick = (idx,fallback)=> meal[idx] ? meal[idx][2].replace(/\s*—.*$/,'').replace(/\s*\([^)]*\)/g,'').trim() : fallback;
+  const simpleDiet = [
+    ["Fuel", today.type==="Long Run"||today.type==="Tempo"||today.type==="Walk-Run" ? pick(0,"Banana + water before session") : "Hydrate early + light fruit"],
+    ["Breakfast", pick(1,"Eggs or oats + fruit")],
+    ["Lunch", pick(3,"Lean protein + rice + vegetables")],
+    ["Dinner", pick(5,"Protein + carbs + easy vegetables")]
+  ];
+  $("h-diet-simple").innerHTML = simpleDiet.map(([k,v])=>`<div class="diet-chip"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
+
+  const modes = [
+    {n:"MAF Smart", c:"var(--acc)", on: phase>=2},
+    {n:"Knee Guard", c:"var(--red)", on: (lk && +lk>=3) || phase<=1},
+    {n:"Race Build", c:"var(--pur)", on: phase===3 || phase===4},
+    {n:"Recovery", c:"var(--gold)", on: today.type==="Rest" || today.type==="Recovery Jog"}
+  ];
+  $("h-modes").innerHTML = modes.map(m=>`<div class="mode-pill ${m.on?'active':''}"><span class="dot" style="background:${m.c}"></span>${m.n}</div>`).join("");
+
+  const isRunDay=["Easy Run","Long Run","Tempo","Walk-Run","Shakeout","RACE"].includes(today.type);
+  const sched=[
+    {t:"AM",v:isRunDay?`Focus on ${today.type.toLowerCase()} effort, not pace. Stay below ${today.hr}.`:"Protect recovery, mobility, and calm effort."},
+    {t:"Midday",v:"Hydrate consistently, short walk break, and keep knee calm after sitting."},
+    {t:"PM",v:isRunDay?`Complete ${today.dist} and log knee, energy, and water right after.`:"Use prehab or strength as planned and log how the knee feels."},
+    {t:"Night",v:"Dinner with protein + carbs, foam roll, and 8+ hours sleep target."}
+  ];
+  $("h-schedule").innerHTML=sched.map(s=>`<div style="display:flex;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05)"><div style="font-weight:800;color:var(--acc2);min-width:72px;flex-shrink:0">${s.t}</div><div style="color:var(--txt2);flex:1">${s.v}</div></div>`).join("");
+}
+
+
+/* ── RENDER LOG ──────────────────────────────────────────── */
+let logWkIdx=1;
+function renderLog(){
+  const wkIdx=logWkIdx,totWks=totalWeeks();
+  const phase=assignPhase(wkIdx,totWks);
+  const pm=PM[phase];
+  const mi=weekTargetMi(wkIdx,totWks,phase);
+  const lr=weekLR(mi,phase);
+  const days=getDays(wkIdx,phase,mi,lr);
+  const logged=weekMiLogged(wkIdx);
+  const pct=mi>0?Math.min(100,Math.round(logged/mi*100)):0;
+
+  $("log-wkn").textContent=wkIdx;
+  $("log-wkd").textContent=`${fmtDate(weekStartDate(wkIdx))} – ${fmtDate(weekEndDate(wkIdx))} · ${pm.n}`;
+  $("log-prog").style.width=`${Math.round(wkIdx/totWks*100)}%`;
+  $("log-prog-lbl").textContent=`Week ${wkIdx} of ${totWks} — ${Math.round(wkIdx/totWks*100)}% of plan`;
+  $("lw-tgt").textContent=mi||"—";$("lw-done").textContent=logged;
+  $("lw-pct").textContent=`${pct}%`;
+  $("lw-bar").style.width=`${pct}%`;
+  $("log-focus").textContent=PHASE_FOCUS[phase];
+
+  const str=STRENGTH[Math.min(phase,4)]||STRENGTH[2];
+  const iso=todayISO();
+  const cont=$("log-days");cont.innerHTML="";
+
+  days.forEach((d,i)=>{
+    const log=ST.logs[d.date]||{};
+    const isToday=d.date===iso;
+    const hasLog=!!(log.knee||log.miles||log.notes||log.energy);
+    const tc=typeColor(d.type);
+    const meal=MEALS[i%7];
+    const det=document.createElement("details");
+    det.className="day-card";
+    if(isToday)det.open=true;
+
+    det.innerHTML=`
+    <summary>
+      <div class="day-sum${isToday?" today-hl":hasLog?" logged-hl":""}">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:14px;font-weight:800;color:${isToday?"var(--acc)":"var(--txt)"}">${d.day}${isToday?` <span style="font-size:10px;font-weight:700;color:var(--acc);background:rgba(0,229,176,.15);padding:1px 7px;border-radius:10px">TODAY</span>`:""}</span>
+            <span style="font-size:11px;color:var(--mut)">${d.date}</span>
+          </div>
+          <div style="font-size:13px;font-weight:700;color:${tc};margin-top:3px">${d.type}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:14px;font-weight:800;color:${hasLog?"var(--acc)":"var(--mut)"};font-variant-numeric:tabular-nums">${d.dist}</div>
+          ${hasLog?`<div style="font-size:10px;color:var(--acc);font-weight:700;margin-top:2px">✓ logged</div>`:""}
+        </div>
+      </div>
+    </summary>
+    <div class="day-body">
+
+      <!-- WORKOUT DESCRIPTION -->
+      <div class="focus blu" style="font-size:13px;margin-top:4px">${d.note}</div>
+
+      <div class="g2" style="gap:8px;margin-bottom:14px">
+        <div class="tile"><div class="label">HR target</div><div style="font-size:16px;font-weight:800;color:var(--acc)">${d.hr}</div></div>
+        <div class="tile"><div class="label">Distance</div><div style="font-size:16px;font-weight:800;font-variant-numeric:tabular-nums">${d.dist}</div></div>
+      </div>
+
+      <!-- LOG FORM -->
+      <div style="font-size:11px;font-weight:800;color:var(--txt2);text-transform:uppercase;letter-spacing:.09em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bor)">Log this session</div>
+
+      <div class="g2" style="gap:8px;margin-bottom:10px">
+        <div><div class="label">Miles completed</div>
+          <input type="number" step="0.1" min="0" max="35" placeholder="0.0" value="${log.miles||""}"
+            data-date="${d.date}" data-field="miles" class="li"
+            style="font-size:22px;font-weight:800;text-align:center;padding:10px"></div>
+        <div><div class="label">Duration (h:mm)</div>
+          <input type="text" placeholder="0:45" value="${log.duration||""}"
+            data-date="${d.date}" data-field="duration" class="li"></div>
+      </div>
+
+      <div class="g2" style="gap:8px;margin-bottom:12px">
+        <div><div class="label">Avg HR (bpm)</div>
+          <input type="number" min="50" max="220" placeholder="—" value="${log.hr_avg||""}"
+            data-date="${d.date}" data-field="hr_avg" class="li"></div>
+        <div><div class="label">Cadence (spm)</div>
+          <input type="number" min="130" max="210" placeholder="165" value="${log.cadence||""}"
+            data-date="${d.date}" data-field="cadence" class="li"></div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div class="label">Knee pain (1 = zero pain · 5 = severe)</div>
+        <div style="display:flex;gap:6px;margin-top:7px" id="kne-${d.date}"></div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div class="label">Energy / recovery (1 = exhausted · 5 = fully fresh)</div>
+        <div style="display:flex;gap:6px;margin-top:7px" id="eng-${d.date}"></div>
+      </div>
+
+      <div class="g2" style="gap:8px;margin-bottom:12px">
+        <div><div class="label">Water (glasses)</div>
+          <input type="number" min="0" max="20" placeholder="10" value="${log.water||""}"
+            data-date="${d.date}" data-field="water" class="li"></div>
+        <div><div class="label">Strength done?</div>
+          <select data-date="${d.date}" data-field="str_done" class="li">
+            <option value="">—</option>
+            <option value="yes" ${log.str_done==="yes"?"selected":""}>✓ Done</option>
+            <option value="partial" ${log.str_done==="partial"?"selected":""}>½ Partial</option>
+            <option value="no" ${log.str_done==="no"?"selected":""}>✗ Skipped</option>
+          </select></div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="label">Session notes — knee, form, conditions, feelings</div>
+        <textarea rows="3" placeholder="How did it feel? Knee feedback? Heat? HR discipline? Form cues? Fueling?"
+          data-date="${d.date}" data-field="notes" class="li" style="font-size:14px">${log.notes||""}</textarea>
+      </div>
+
+      <!-- STEP-BY-STEP EXERCISE GUIDE -->
+      <details style="margin-bottom:10px">
+        <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:10px 0">
+          <div style="flex:1;font-size:12px;font-weight:700;color:${str.color};text-transform:uppercase;letter-spacing:.07em">${str.name}</div>
+          <div class="chevron" style="font-size:12px;color:var(--mut)">▾</div>
+        </summary>
+        <div style="background:var(--card2);border-radius:12px;padding:12px 14px;margin-top:2px">
+          ${str.items.map((x,idx)=>`<div class="ex-step">
+            <div class="ex-num" style="background:${str.color}22;border:1px solid ${str.color}44;color:${str.color}">${idx+1}</div>
+            <div class="ex-text"><strong>${x.n}</strong> <span style="color:var(--acc2);font-size:11px;font-weight:700">${x.r}</span><div class="ex-detail">${x.d}</div></div>
+          </div>`).join("")}
+        </div>
+      </details>
+
+      <!-- DAILY MEAL PLAN -->
+      <details>
+        <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:10px 0">
+          <div style="flex:1;font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.07em">Today's meal plan</div>
+          <div class="chevron" style="font-size:12px;color:var(--mut)">▾</div>
+        </summary>
+        <div style="background:var(--card2);border-radius:12px;padding:12px 14px;margin-top:2px">
+          ${meal.map(([icon,t,m])=>`<div class="meal-row">
+            <div class="meal-icon">${icon}</div>
+            <div class="meal-time">${t}</div>
+            <div class="meal-text">${m}</div>
+          </div>`).join("")}
+        </div>
+      </details>
+    </div>`;
+
+    cont.appendChild(det);
+    buildRatings(`kne-${d.date}`,d.date,"knee","#FF4F6A",log.knee);
+    buildRatings(`eng-${d.date}`,d.date,"energy","#00E5B0",log.energy);
+  });
+
+  cont.querySelectorAll(".li").forEach(el=>{
+    el.addEventListener("change",saveLogField);
+    el.addEventListener("blur",saveLogField);
+  });
+}
+
+function buildRatings(cid,date,field,color,cur){
+  const el=document.getElementById(cid);if(!el)return;
+  el.innerHTML="";
+  for(let v=1;v<=5;v++){
+    const b=document.createElement("button");b.className="r-btn";b.textContent=v;
+    const on=+cur===v;
+    if(on){b.style.background=color+"33";b.style.borderColor=color;b.style.color=color;}
+    b.onclick=()=>{saveLogEntry(date,field,v);renderLog();flashSaved();};
+    el.appendChild(b);
+  }
+}
+
+function saveLogField(e){const el=e.target;saveLogEntry(el.dataset.date,el.dataset.field,el.value);flashSaved();}
+function saveLogEntry(date,field,val){
+  if(!date||!field)return;
+  if(!ST.logs[date])ST.logs[date]={};
+  ST.logs[date][field]=val;ST.logs[date].ts=new Date().toISOString();
+  saveState();
+  // Update week stats live
+  const wkIdx=logWkIdx;
+  const logged=weekMiLogged(wkIdx);
+  const totWks=totalWeeks();
+  const phase=assignPhase(wkIdx,totWks);
+  const mi=weekTargetMi(wkIdx,totWks,phase);
+  const pct=mi>0?Math.min(100,Math.round(logged/mi*100)):0;
+  $("lw-done").textContent=logged;$("lw-pct").textContent=`${pct}%`;$("lw-bar").style.width=`${pct}%`;
+}
+function flashSaved(){const b=$("log-saved");b.style.opacity="1";clearTimeout(flashSaved._t);flashSaved._t=setTimeout(()=>{b.style.opacity="0";},2000);}
+
+/* ── RENDER COACH ─────────────────────────────────────────── */
+function renderCoach(){
+  $("coach-key").value=ST.coachKey||"";
+  const zones=calcZones();
+  $("coach-zones").innerHTML=zones.map(z=>`<div class="zone-row"><div class="zone-dot" style="background:${z.c}"></div><div class="zone-lbl">${z.n}</div><div class="zone-val">${z.r}</div></div>`).join("")
+    +`<div class="zone-row"><div class="zone-dot" style="background:var(--acc)"></div><div class="zone-lbl">MAF HR ceiling (Maffetone)</div><div class="zone-val" style="color:var(--acc)">≤${calcMAF()} bpm</div></div>`;
+  if(ST.lastCoach){
+    $("coach-response").style.display="block";
+    $("coach-out").textContent=ST.lastCoach.text;
+    $("coach-ts").textContent=`Last analysis: ${new Date(ST.lastCoach.ts).toLocaleString("en-US",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"})}`;
+  }
+}
+
+async function runCoach(){
+  const key=($("coach-key").value||ST.coachKey||"").trim();
+  if(!key){toast("Enter your Anthropic API key above");return;}
+  ST.coachKey=key;saveState();
+  $("coach-loading").style.display="block";$("coach-response").style.display="none";
+
+  const wkIdx=curWeekIdx(),totWks=totalWeeks();
+  const hist=[];
+  for(let w=Math.max(1,wkIdx-5);w<=wkIdx;w++){
+    const p2=assignPhase(w,totWks),mi2=weekTargetMi(w,totWks,p2),lr2=weekLR(mi2,p2);
+    const days=getDays(w,p2,mi2,lr2);
+    const dayLogs=days.map(d=>({date:d.date,day:d.day,...(ST.logs[d.date]||{})}));
+    const knees=dayLogs.filter(d=>d.knee).map(d=>+d.knee);
+    hist.push({week:w,phase:PM[p2].n,target:mi2,longRun:lr2,
+      logged:weekMiLogged(w),avgKnee:knees.length?(knees.reduce((a,b)=>a+b,0)/knees.length).toFixed(1):null,
+      days:dayLogs.map(d=>({d:d.date,type:d.day,miles:d.miles,knee:d.knee,energy:d.energy,water:d.water,str:d.str_done,notes:d.notes}))});
+  }
+  const pf=ST.profile;
+  const zone_str=calcZones().map(z=>`${z.n}: ${z.r}`).join(", ");
+  const sys=`You are a world-class marathon coach with expertise in: Maffetone Method (MAF training), Lydiard periodization, PFPS (runner's knee) rehabilitation, sports nutrition, and elite endurance performance. Be precise, specific, and data-driven. Never give generic advice.
+
+ATHLETE PROFILE:
+Name: ${pf.name||"Runner"} | Age: ${calcAge(pf.dob)} | Weight: ${pf.weight} lbs | Height: ${pf.height} | BMI: ${calcBMI(pf.weight,pf.height)}
+Race: Chevron Houston Marathon, Jan 17 2027 | Goal: sub-4:59:59 (11:27/mi)
+Half-marathon PR: ${pf.half} | Easy pace: ${pf.easy}/mi
+Condition: ${pf.injury}
+Diet: ${pf.notes.slice(0,200)}
+MAF HR: ≤${calcMAF()} bpm | HRmax: ${calcHRMax()} | Resting HR: ${pf.rhr}
+Training zones: ${zone_str}
+Current plan: Week ${wkIdx} of ${totWks} (Phase: ${PM[assignPhase(wkIdx,totWks)].n})`;
+
+  const user=`DAILY LOG DATA (last ${hist.length} weeks, per-day resolution):\n${JSON.stringify(hist,null,2)}\n\nProvide your complete coaching evaluation in this exact format:\n\n**PERFORMANCE ASSESSMENT**\n[3–4 sentences. Analyze PFPS recovery trend, mileage adherence %, aerobic adaptation indicators, and energy patterns from daily data.]\n\n**NEXT WEEK PLAN ADJUSTMENTS**\n• [Specific mileage change with exact number]\n• [Long run guidance with exact distance]\n• [Intensity/zone adjustment based on knee scores]\n• [Recovery or prehab emphasis based on data]\n• [One additional key focus]\n\n**PFPS KNEE PROTOCOL**\n[2 sentences: specific action based on the knee pain data you see in the logs.]\n\n**MAF TRAINING ASSESSMENT**\n[1–2 sentences: Is the athlete respecting MAF HR? Evidence of aerobic adaptation?]\n\n**NUTRITION TIMING FOR NEXT WEEK**\n[1 specific evidence-based nutrition adjustment for their mixed South Indian + omnivore diet.]\n\n**RACE PROJECTION**\n[Based on current fitness, what sub-5 projection looks like. Be honest but encouraging.]\n\n**MOTIVATIONAL CLOSE**\n[One powerful personalized line about their Houston 2027 journey.]\n\nMax 350 words. You are the best coach in the world.`;
+
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1200,system:sys,messages:[{role:"user",content:user}]})
+    });
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message||"API error");
+    const text=data.content?.map(b=>b.text||"").join("")||"No response.";
+    ST.lastCoach={text,ts:new Date().toISOString()};saveState();
+    $("coach-out").textContent=text;
+    $("coach-ts").textContent=`Analysis: ${new Date().toLocaleString("en-US",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"})}`;
+    $("coach-response").style.display="block";
+    toast("Coach analysis complete");
+  }catch(err){
+    $("coach-out").textContent=`Error: ${err.message}\n\nCheck your API key and ensure it has credits at console.anthropic.com`;
+    $("coach-response").style.display="block";
+    toast("Analysis error — check API key");
+  }finally{$("coach-loading").style.display="none";}
+}
+
+/* ── RENDER PLAN ─────────────────────────────────────────── */
+
+function renderPlan(){
+  const totWks=totalWeeks();
+  const curIdx=curWeekIdx();
+  $("plan-subtitle").textContent=`${fmtDate(parseDate(ST.profile.startDate))} → ${fmtDate(raceDate())} · ${totWks} weeks`;
+  const filter=$("plan-filter").value;
+  const el=$("plan-list");let html="";
+  for(let w=1;w<=totWks;w++){
+    const phase=assignPhase(w,totWks);
+    if(filter!=="all"&&String(phase)!==filter)continue;
+    const pm=PM[phase],mi=weekTargetMi(w,totWks,phase),lr=weekLR(mi,phase);
+    const days=getDays(w,phase,mi,lr);
+    const logged=weekMiLogged(w);
+    const pct=mi>0?Math.min(100,Math.round(logged/mi*100)):0;
+    const isCur=w===curIdx;
+    const str=STRENGTH[Math.min(phase,4)]||STRENGTH[2];
+    html+=`<details class="week-card"${isCur?" open":""}>
+      <summary>
+        <div class="wk-sum${isCur?" cur":""}">
+          <div>${w}</div>
+          <div style="flex:1;min-width:0">
+            <div>${fmtDate(weekStartDate(w))} – ${fmtDate(weekEndDate(w))}</div>
+            <div>Target ${mi||"—"} mi · Long ${lr||"—"} mi${(w-1)%3===2?" · Recovery↓":""}</div>
+          </div>
+          <span class="badge ${pm.cls}" style="font-size:14px;padding:6px 12px">${pm.n}</span>
+        </div>
+      </summary>
+      <div class="wk-body">
+        ${mi>0?`<div style="margin:8px 0 14px">
+          <div style="color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Mileage: ${logged}/${mi} mi (${pct}%)</div>
+          <div class="prog"><div style="width:${pct}%;background:${pct>=88?"var(--acc)":"var(--gold)"}"></div></div>
+        </div>`:""}
+        <div class="focus" style="margin-bottom:14px">${PHASE_FOCUS[phase]}</div>
+        ${days.map(d=>{const tc=typeColor(d.type);return `<div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05);align-items:flex-start">
+          <div style="font-weight:800;color:var(--mut);min-width:42px;padding-top:4px">${d.day}</div>
+          <div class="badge" style="background:${tc}20;color:${tc};border-color:${tc}44">${d.type}</div>
+          <div style="font-weight:700;color:var(--txt);flex-shrink:0;min-width:62px">${d.dist}</div>
+          <div style="color:var(--txt2);line-height:1.6;flex:1">${d.note.slice(0,118)}${d.note.length>118?"…":""}</div>
+        </div>`;}).join("")}
+        <div style="margin-top:14px;background:var(--card2);border-radius:18px;padding:16px;border-left:3px solid ${str.color}">
+          <div style="font-weight:700;color:${str.color};text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">${str.name}</div>
+          ${str.items.slice(0,4).map((x,i)=>`<div style="color:var(--txt2);margin-bottom:7px"><strong style="color:var(--txt)">${i+1}. ${x.n}</strong> <span style="color:var(--mut)">${x.r}</span></div>`).join("")}
+          ${str.items.length>4?`<div style="color:var(--mut);margin-top:4px">+${str.items.length-4} more exercises — expand in Log tab</div>`:""}
+        </div>
+      </div>
+    </details>`;
+  }
+  el.innerHTML=html||`<div style="text-align:center;padding:40px 0;color:var(--mut);font-size:16px">No weeks match. Set dates in Profile tab.</div>`;
+}
+
+
+/* ── RENDER PROFILE ──────────────────────────────────────── */
+function renderProfile(){
+  const p=ST.profile;
+  $("p-name").value=p.name||"";$("p-dob").value=p.dob||"1987-05-01";$("p-sex").value=p.sex||"M";
+  $("p-height").value=p.height||"6'0\"";$("p-weight").value=p.weight||"154";
+  $("p-injury").value=p.injury||"";$("p-rhr").value=p.rhr||"55";$("p-mhr").value=p.mhr||"0";
+  $("p-half").value=p.half||"2:49:59";$("p-easy").value=p.easy||"13:30";
+  $("p-start").value=p.startDate||"2026-04-06";$("p-race").value=p.raceDate||"2027-01-17";
+  $("p-notes").value=p.notes||"";
+  updateProfileCalc();
+}
+
+function updateProfileCalc(){
+  const dob=$("p-dob").value||"1987-05-01";
+  const wt=parseFloat($("p-weight").value||"154");
+  const ht=$("p-height").value||"6'0\"";
+  const age=calcAge(dob);
+  $("p-age").textContent=age;$("p-bmi").textContent=calcBMI(wt,ht);$("p-hrmax").textContent=220-age;
+
+  const inj=($("p-injury")||{}).value||"";
+  const hasInj=/pain|pfps|injury|knee/i.test(inj);
+  const maf=180-age-(hasInj?5:0);
+  $("p-maf").textContent=maf;$("p-mafi").textContent=maf-5;
+
+  const rhr=parseFloat($("p-rhr")?.value)||55;
+  const mhrRaw=parseFloat($("p-mhr")?.value)||0;
+  const hrmax=mhrRaw>120?mhrRaw:220-age;
+  const res=Math.max(60,hrmax-rhr);
+  const z=(lo,hi)=>`${Math.round(rhr+res*lo)}–${Math.round(rhr+res*hi)} bpm`;
+  const zones=[{n:"Zone 1 · Recovery",r:z(.50,.60),c:"#64748B"},{n:"Zone 2 · Aerobic",r:z(.60,.70),c:"#00E5B0"},
+    {n:"Zone 3 · Tempo",r:z(.70,.80),c:"#F5A623"},{n:"Zone 4 · Threshold",r:z(.80,.90),c:"#FF4F6A"},{n:"Zone 5 · Max",r:z(.90,1.00),c:"#9B7FFF"}];
+  $("p-zones").innerHTML=zones.map(z=>`<div class="zone-row"><div class="zone-dot" style="background:${z.c}"></div><div class="zone-lbl">${z.n}</div><div class="zone-val">${z.r}</div></div>`).join("");
+
+  const start=parseDate($("p-start")?.value||"2026-04-06");
+  const race=parseDate($("p-race")?.value||"2027-01-17");
+  const twks=start&&race?Math.max(1,Math.round((race-start)/6048e5)):41;
+  $("p-totalwks").textContent=twks;
+
+  const ep=parsePace($("p-easy")?.value)||13.5;
+  $("p-tpace").textContent=`${fmtPace(ep-0.9)} /mi`;
+  const hp=parsePace($("p-half")?.value);
+  $("p-mpace").textContent=hp?`${fmtPace(hp/13.1094*26.2188/26.2188*26.2188/26.2)} /mi`:"11:27 /mi";
+}
+
+function saveProfile(){
+  ST.profile={
+    name:$("p-name").value.trim(),dob:$("p-dob").value,sex:$("p-sex").value,
+    height:$("p-height").value.trim(),weight:$("p-weight").value,
+    injury:$("p-injury").value.trim(),rhr:$("p-rhr").value,mhr:$("p-mhr").value,
+    half:$("p-half").value.trim(),easy:$("p-easy").value.trim(),
+    startDate:$("p-start").value,raceDate:$("p-race").value,
+    notes:$("p-notes").value.trim(),
+  };
+  saveState();logWkIdx=curWeekIdx();renderAll();toast("Profile saved — all zones and plan updated");
+}
+
+/* ── BACKUP ──────────────────────────────────────────────── */
+function exportBackup(){
+  const blob=new Blob([JSON.stringify({...ST,exportDate:new Date().toISOString()},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download=`marathon_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();URL.revokeObjectURL(a.href);toast("Backup downloaded");
+}
+function importBackup(file){
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.profile)throw 0;
+    ST={profile:{...DEF.profile,...d.profile},logs:d.logs||{},coachKey:d.coachKey||"",lastCoach:d.lastCoach||null};
+    saveState();logWkIdx=curWeekIdx();renderAll();toast("Backup imported successfully");
+  }catch(e){toast("Import failed — check file format");}};
+  r.readAsText(file);
+}
+
+/* ── NAV ─────────────────────────────────────────────────── */
+function renderAll(){renderHome();renderLog();renderCoach();renderPlan();renderProfile();}
+function switchTab(tab){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("on"));
+  $("s-"+tab).classList.add("active");
+  document.querySelector(`.nav button[data-tab="${tab}"]`).classList.add("on");
+  if(tab==="home")renderHome();
+  else if(tab==="log")renderLog();
+  else if(tab==="coach")renderCoach();
+  else if(tab==="plan")renderPlan();
+  else if(tab==="profile")renderProfile();
+}
+
+/* ── BIND EVENTS ─────────────────────────────────────────── */
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
+$("log-prev").addEventListener("click",()=>{logWkIdx=Math.max(1,logWkIdx-1);renderLog();});
+$("log-next").addEventListener("click",()=>{logWkIdx=Math.min(totalWeeks(),logWkIdx+1);renderLog();});
+$("coach-analyze").addEventListener("click",runCoach);
+$("coach-rerun").addEventListener("click",runCoach);
+$("coach-save-key").addEventListener("click",()=>{ST.coachKey=$("coach-key").value.trim();saveState();toast("API key saved");});
+$("coach-export").addEventListener("click",exportBackup);
+$("coach-import").addEventListener("change",e=>importBackup(e.target.files[0]));
+$("plan-filter").addEventListener("change",renderPlan);
+$("p-save").addEventListener("click",saveProfile);
+$("p-reset").addEventListener("click",()=>{if(!confirm("Reset ALL logs and profile?"))return;ST=JSON.parse(JSON.stringify(DEF));saveState();logWkIdx=curWeekIdx();renderAll();toast("Reset complete");});
+["p-dob","p-weight","p-height","p-rhr","p-mhr","p-injury","p-easy","p-half","p-start","p-race"].forEach(id=>{const el=$(id);if(el)el.addEventListener("input",updateProfileCalc);});
+
+/* ── INIT ────────────────────────────────────────────────── */
+logWkIdx=curWeekIdx();
+renderHome();renderLog();renderCoach();
+tick();setInterval(tick,1000);
+})();
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./service-worker.js', {scope:'./'}).catch(function(){});
+  });
+}
+</script>
+
+</body>
+</html>
